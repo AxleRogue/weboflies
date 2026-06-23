@@ -1,0 +1,72 @@
+{
+  "parent": "weboflies:kill_spider_egg",
+  "display": {
+    "icon": {
+      "item": "minecraft:blaze_powder"
+    },
+    "title": {
+      "translate": "advancement.weboflies.kill_black_widow_brood_mother.title"
+    },
+    "description": {
+      "translate": "advancement.weboflies.kill_black_widow_brood_mother.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "kill_black_widow_brood_mother_with_fire": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow_brood_mother"
+            }
+          }
+        ],
+        "killing_blow": {
+          "is_fire": true
+        }
+      }
+    },
+    "kill_black_widow_brood_mother_with_fire_aspect": {
+      "trigger": "minecraft:player_killed_entity",
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow_brood_mother"
+            }
+          }
+        ],
+        "killing_blow": {
+          "item": {
+            "enchantments": [
+              {
+                "enchantment": "minecraft:fire_aspect",
+                "levels": {
+                  "min": 1
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "requirements": [
+    [
+      "kill_black_widow_brood_mother_with_fire",
+      "kill_black_widow_brood_mother_with_fire_aspect"
+    ]
+  ],
+  "rewards": {
+    "experience": 1000
+  }
+}

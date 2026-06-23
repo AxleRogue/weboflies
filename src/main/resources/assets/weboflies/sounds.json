@@ -1,0 +1,11 @@
+{
+  "spider_root_forest_music": {
+    "category": "music",
+    "sounds": [
+      {
+        "name": "weboflies:music/spider_root_forest_music",
+        "stream": true
+      }
+    ]
+  }
+}

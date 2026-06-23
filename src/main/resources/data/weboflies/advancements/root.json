@@ -1,0 +1,26 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:cobweb"
+    },
+    "title": {
+      "translate": "advancement.weboflies.root.title"
+    },
+    "description": {
+      "translate": "advancement.weboflies.root.description"
+    },
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "entered_dark_forest": {
+      "trigger": "minecraft:changed_dimension",
+      "conditions": {
+        "to": "weboflies:dark_forest"
+      }
+    }
+  }
+}

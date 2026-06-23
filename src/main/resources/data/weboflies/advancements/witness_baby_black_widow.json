@@ -1,0 +1,28 @@
+{
+  "display": {
+    "icon": {
+      "item": "minecraft:spider_eye"
+    },
+    "title": {
+      "translate": "advancement.weboflies.witness_baby_black_widow.title"
+    },
+    "description": {
+      "translate": "advancement.weboflies.witness_baby_black_widow.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "parent": "weboflies:kill_black_widow",
+  "criteria": {
+    "witness_baby": {
+      "trigger": "minecraft:entity_properties",
+      "conditions": {
+        "entity": {
+          "type": "weboflies:baby_black_widow"
+        }
+      }
+    }
+  }
+}

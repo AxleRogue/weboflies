@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "condition": "minecraft:match_tool",
+              "predicate": {
+                "items": [
+                  "minecraft:wooden_sword",
+                  "minecraft:stone_sword",
+                  "minecraft:iron_sword",
+                  "minecraft:golden_sword",
+                  "minecraft:diamond_sword",
+                  "minecraft:netherite_sword"
+                ]
+              }
+            }
+          ],
+          "name": "weboflies:homeward_cobweb"
+        }
+      ]
+    }
+  ]
+}
