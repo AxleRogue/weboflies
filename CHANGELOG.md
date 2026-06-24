@@ -49,7 +49,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Added `SpiderGibEntity` and `SpiderGibRenderer` to handle the physics and rendering of severed spider parts (Head, Body, Legs).
     - Integrated dismemberment triggers into `StoryEvents` to ensure only mod-specific spiders are affected.
 
-### Changed
+### Fixed
+- **Spider Corpse Models:** Resolved a bug where multiple mob parts would float away or misalign during the dismemberment animation upon death.
 - **Spider Egg Mechanics:** Hatch time increased to 1 full Minecraft day, and they now only hatch in the morning.
 - **World Generation:**
     - Replaced vanilla `Giant Dark Oak` trees with the custom `Spider Root Trees` in the Spider Root Forest biome.
