@@ -1,0 +1,40 @@
+{
+  "parent": "weboflies:eat_goose_berry",
+  "criteria": {
+    "bred_black_widow": {
+      "conditions": {
+        "child": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:bred_animals"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.breed_black_widow.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.breed_black_widow.title"
+    }
+  },
+  "requirements": [
+    [
+      "bred_black_widow"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

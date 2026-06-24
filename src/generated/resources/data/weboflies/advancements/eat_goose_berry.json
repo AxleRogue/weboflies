@@ -1,0 +1,36 @@
+{
+  "parent": "weboflies:root",
+  "criteria": {
+    "ate_goose_berry": {
+      "conditions": {
+        "item": {
+          "items": [
+            "weboflies:goose_berry"
+          ]
+        }
+      },
+      "trigger": "minecraft:consume_item"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.eat_goose_berry.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "weboflies:goose_berry"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.eat_goose_berry.title"
+    }
+  },
+  "requirements": [
+    [
+      "ate_goose_berry"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

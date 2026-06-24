@@ -1,0 +1,45 @@
+{
+  "criteria": {
+    "entered_dark_forest": {
+      "conditions": {
+        "to": "weboflies:dark_forest"
+      },
+      "trigger": "minecraft:changed_dimension"
+    },
+    "has_spider_eye": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "minecraft:spider_eye"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "background": "minecraft:textures/gui/advancements/backgrounds/stone.png",
+    "description": {
+      "translate": "advancement.weboflies.root.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:cobweb"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.root.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_spider_eye",
+      "entered_dark_forest"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

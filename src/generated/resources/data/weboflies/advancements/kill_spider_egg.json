@@ -1,0 +1,40 @@
+{
+  "parent": "weboflies:root",
+  "criteria": {
+    "killed_spider_egg": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:spider_egg"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.kill_spider_egg.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:spider_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.kill_spider_egg.title"
+    }
+  },
+  "requirements": [
+    [
+      "killed_spider_egg"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

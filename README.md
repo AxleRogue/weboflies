@@ -8,22 +8,27 @@ Centuries ago, the King of Lies spun a massive web, creating a dimension that ha
 ## 🕷️ Key Features
 
 ### 1. Unique Entities
-- **Black Widow:** Neutral during the day, but a fierce hunter at night. They feature emissive glowing red eyes and hourglasses that pierce through the darkness.
-- **Black Widow Brood Mother:** A powerful boss that guards the heart of spider colonies. She features advanced AI, including pounce attacks, ranged web projectiles, and the ability to summon Black Widows for aid.
-- **Baby Black Widow:** A vulnerable stage of the spider lifecycle. They flee from danger and call for help from nearby adults.
+- **Black Widow:** Peaceful and neutral during the day, but a fierce hunter at night. They extend the `Animal` class for breeding while implementing `Enemy` for hostile interactions. Features emissive glowing red eyes and hourglasses.
+- **Black Widow Brood Mother:** A powerful boss that guards the heart of spider colonies. She features advanced AI, including pounce attacks, ranged web projectiles, and the ability to summon Black Widows for aid. Always aggressive and maintains mini-boss status.
+- **Baby Black Widow:** A vulnerable stage of the spider lifecycle. They flee from danger and call for help from nearby adults. Peaceful during the day, hostile at night.
 - **Spider Egg:** Soul-bound entities that hatch into 4 babies. They inherit the species and traits of their parents.
-- **Corpse System:** Defeated Black Widow variants (Adult, Baby, and Brood Mother) now leave behind "severed" corpses with scattered body parts on the ground in the Dark Forest. Added robust model part detection to prevent crashes on different environments.
+- **Corpse System:** Defeated Black Widow variants (Adult, Baby, and Brood Mother) now leave behind "severed" corpses with scattered body parts on the ground in the Dark Forest.
+- **Mob Dismemberment:** Custom spiders now feature a realistic dismemberment system where body parts (head, body, legs) physically separate and fly off with random momentum upon death, inspired by the "Mob Dismemberment" mod.
 - **Nametag System:** Entities now feature dynamic nametags that display their current health (e.g., "Black Widow 20.0/20.0") and update in real-time.
 - **Spider Jockey Prevention:** Black Widows can no longer be ridden by skeletons or other entities, ensuring they remain independent hunters.
 - **Atmospheric Storytelling:** Added "mumbling" inner thoughts for players exploring the Dark Forest and server-wide broadcasts for slaying major mod entities.
 
 ### 2. The Dark Forest Dimension
-- **Spider Root Forest Biome:** A dense, dark biome featuring Giant Dark Oak trees and special extra-tall variants, patches of roses, and snowberry bushes.
+- **Terrain:** Now uses **Amplified** noise settings for a more rugged and imposing landscape.
+- **Poison Fang Swamp Biome:** A murky, swamp-like biome featuring acid green water, dark swamp green grass, and dark swamp green sky. Constant warm rain sets the atmosphere.
+- **Spider Root Forest Biome:** A dense forest filled with Spider Root Trees. Now uses a Dark Oak Forest layout for a thicker canopy.
+- **Vegetation:**
+  - **Gooseberry Bush:** A harvestable bush that provides Goose Berries. Spiders will actively harvest these to breed.
 - **Atmospheric Effects:**
   - **Black Fog:** A thick, claustrophobic pitch-black fog that smoothly descends upon the dimension as night falls and clears at dawn.
   - **Blood Splatters:** Custom particle effects—green goo for spiders and red blood for players—when taking damage within the dimension.
-  - **Custom Music:** Immersive audio tracks that enhance the spooky atmosphere of the Spider Root Forest.
-- **Custom Spawning:** Only mod-specific spiders and eggs spawn here; vanilla animals and mobs (including spider jockeys) are strictly blocked.
+  - **Custom Music:** Immersive audio tracks that enhance the spooky atmosphere of the Spider Root Forest. *(Note: Music is currently experiencing technical issues in some biomes and is scheduled for a fix in the next update.)*
+- **Custom Spawning:** Only mod-specific spiders and eggs spawn here; vanilla animals and mobs are strictly blocked. Spiders spawn as `CREATURE` category entities during the day.
 
 ### 3. Advanced Teleportation
 - **Homeward Cobweb:** A craftable block that acts as a beacon. When placed, it can be named and added to a cross-dimensional navigation network with a custom GUI.
@@ -32,7 +37,10 @@ Centuries ago, the King of Lies spun a massive web, creating a dimension that ha
 
 ### 4. Gameplay Mechanics
 - **Story Events:** Dynamic dialogue and narrations triggered by your actions, such as entering the dimension, defeating bosses, or harvesting resources.
-- **Breeding:** Black Widows can be bred during the day using Fermented Spider Eyes to produce Spider Eggs.
+- **Breeding:** Black Widows can be bred using Fermented Spider Eyes or Goose Berries. After breeding, spiders will become "pregnant" and eventually build a cobweb nest to lay a clutch of eggs.
+- **Nesting & Guarding:** Black Widows will guard their egg nests and defend them against intruders.
+- **Day/Night Cycle:** Most spiders are now peaceful during the day (registered as `CREATURE` animals) but become hostile at night. The Brood Mother remains always hostile.
+- **Advancements:** A new set of advancements to guide you through the mod's features, from entering the Dark Forest to becoming a Master Slayer.
 - **Web Placement:** Spiders dynamically place webs throughout the world, making navigation difficult for the unprepared.
 - **Loot Sensitivity:** Use a sword to harvest string from Spiderwebs or to safely retrieve a Homeward Cobweb.
 

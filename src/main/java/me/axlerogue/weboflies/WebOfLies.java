@@ -1,9 +1,6 @@
 package me.axlerogue.weboflies;
 
 import com.mojang.logging.LogUtils;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,8 +17,6 @@ import me.axlerogue.weboflies.network.ModMessages;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.ForgeRegistries;
 import me.axlerogue.weboflies.block.ModBlocks;
 import me.axlerogue.weboflies.item.ModItems;
 import me.axlerogue.weboflies.item.ModCreativeModeTabs;
@@ -34,18 +29,22 @@ import me.axlerogue.weboflies.entity.renderer.BabyBlackWidowRenderer;
 import me.axlerogue.weboflies.entity.renderer.BlackWidowRenderer;
 import me.axlerogue.weboflies.entity.renderer.BlackWidowBroodMotherRenderer;
 import me.axlerogue.weboflies.entity.renderer.CorpseRenderer;
+import me.axlerogue.weboflies.entity.renderer.SpiderGibRenderer;
 import me.axlerogue.weboflies.entity.renderer.SpiderEggModel;
 import me.axlerogue.weboflies.entity.renderer.SpiderEggRenderer;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
+import net.minecraft.world.entity.SpawnPlacements;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
 import org.slf4j.Logger;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod(WebOfLies.MODID)
 public class WebOfLies {
 
@@ -53,10 +52,6 @@ public class WebOfLies {
     public static final String MODID = "weboflies";
     // Directly reference a slf4j logger
     private static final Logger LOGGER = LogUtils.getLogger();
-    // Create a Deferred Register to hold Blocks which will all be registered under the "weboflies" namespace
-    public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, MODID);
-    // Create a Deferred Register to hold Items which will all be registered under the "weboflies" namespace
-    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MODID);
 
     public WebOfLies() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
@@ -82,7 +77,25 @@ public class WebOfLies {
     }
 
     private void commonSetup(final FMLCommonSetupEvent event) {
-        ModMessages.register();
+        event.enqueueWork(() -> {
+            ModMessages.register();
+
+            registerFlammable(ModBlocks.SPIDER_ROOT_LOG.get(), 5, 5);
+            registerFlammable(ModBlocks.SPIDER_ROOT_PLANKS.get(), 5, 20);
+            registerFlammable(ModBlocks.SPIDER_ROOT_LEAVES.get(), 30, 60);
+            registerFlammable(ModBlocks.SPIDER_ROOT_SAPLING.get(), 60, 100);
+        });
+    }
+
+    private void registerFlammable(Block block, int encouragement, int flammability) {
+        net.minecraft.world.level.block.FireBlock fireBlock = (net.minecraft.world.level.block.FireBlock) net.minecraft.world.level.block.Blocks.FIRE;
+        try {
+            java.lang.reflect.Method setFlammable = net.minecraft.world.level.block.FireBlock.class.getDeclaredMethod("setFlammable", Block.class, int.class, int.class);
+            setFlammable.setAccessible(true);
+            setFlammable.invoke(fireBlock, block, encouragement, flammability);
+        } catch (Exception e) {
+            LOGGER.error("Failed to set flammable for block: " + block, e);
+        }
     }
 
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
@@ -110,6 +123,7 @@ public class WebOfLies {
             event.register(ModEntities.BLACK_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
             event.register(ModEntities.BABY_BLACK_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
             event.register(ModEntities.BLACK_WIDOW_BROOD_MOTHER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkBroodMotherSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+            event.register(ModEntities.SPIDER_EGG.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpiderEgg::checkSpiderEggSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         }
     }
 
@@ -123,6 +137,8 @@ public class WebOfLies {
                 ItemBlockRenderTypes.setRenderLayer(ModBlocks.HOMEWARD_COBWEB.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(ModBlocks.HAUNTED_COBWEB.get(), RenderType.cutout());
                 ItemBlockRenderTypes.setRenderLayer(ModBlocks.SPIDERWEB.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(ModBlocks.SPIDER_ROOT_LEAVES.get(), RenderType.cutout());
+                ItemBlockRenderTypes.setRenderLayer(ModBlocks.SPIDER_ROOT_SAPLING.get(), RenderType.cutout());
             });
         }
 
@@ -139,11 +155,26 @@ public class WebOfLies {
             event.registerEntityRenderer(ModEntities.BLACK_WIDOW_BROOD_MOTHER.get(), BlackWidowBroodMotherRenderer::new);
             event.registerEntityRenderer(ModEntities.HAUNTED_COBWEB_PROJECTILE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
             event.registerEntityRenderer(ModEntities.CORPSE.get(), CorpseRenderer::new);
+            event.registerEntityRenderer(ModEntities.SPIDER_GIB.get(), SpiderGibRenderer::new);
         }
 
         @SubscribeEvent
         public static void registerBlockColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Block event) {
             ModBlocks.registerBlockColors(event);
+        }
+        @SubscribeEvent
+        public static void registerDimensionSpecialEffects(RegisterDimensionSpecialEffectsEvent event) {
+            event.register(new ResourceLocation(WebOfLies.MODID, "dark_forest"), new DimensionSpecialEffects(Float.NaN, false, DimensionSpecialEffects.SkyType.NORMAL, false, false) {
+                @Override
+                public Vec3 getBrightnessDependentFogColor(Vec3 fogColor, float brightness) {
+                    return fogColor;
+                }
+
+                @Override
+                public boolean isFoggyAt(int x, int y) {
+                    return false;
+                }
+            });
         }
     }
 }

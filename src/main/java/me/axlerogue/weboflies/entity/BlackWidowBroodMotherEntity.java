@@ -9,8 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.monster.Monster;
-import net.minecraft.world.entity.monster.Spider;
+import net.minecraft.world.entity.animal.Animal;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.ServerLevelAccessor;
 import net.minecraft.util.RandomSource;
@@ -30,7 +29,7 @@ import java.util.EnumSet;
 public class BlackWidowBroodMotherEntity extends BlackWidowEntity {
     private final ServerBossEvent bossEvent = (ServerBossEvent) (new ServerBossEvent(this.getDisplayName(), BossEvent.BossBarColor.RED, BossEvent.BossBarOverlay.PROGRESS)).setDarkenScreen(true);
 
-    public BlackWidowBroodMotherEntity(EntityType<? extends Spider> type, Level level) {
+    public BlackWidowBroodMotherEntity(EntityType<? extends BlackWidowBroodMotherEntity> type, Level level) {
         super(type, level);
     }
 
@@ -45,6 +44,7 @@ public class BlackWidowBroodMotherEntity extends BlackWidowEntity {
         this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
+        // Brood Mother is always aggressive
         this.targetSelector.addGoal(2, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
@@ -219,12 +219,16 @@ public class BlackWidowBroodMotherEntity extends BlackWidowEntity {
         return super.isAlliedTo(entity);
     }
 
-    public static boolean checkSpiderSpawnRules(EntityType<? extends Monster> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+    public static boolean checkSpiderSpawnRules(EntityType<? extends Animal> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        // Daytime-only spawning in our biome/dimension
+        if (!level.getLevel().isDay()) {
+            return false;
+        }
         return level.getBlockState(pos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) || level.getBlockState(pos.below()).is(BlockTags.LEAVES);
     }
 
     public static boolean checkBroodMotherSpawnRules(EntityType<BlackWidowBroodMotherEntity> entityType, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
-        if (!checkSpiderSpawnRules((EntityType<? extends Monster>) (EntityType<?>) entityType, level, spawnType, pos, random)) {
+        if (!checkSpiderSpawnRules(entityType, level, spawnType, pos, random)) {
             return false;
         }
         // Only one at a time in the dimension
@@ -236,6 +240,6 @@ public class BlackWidowBroodMotherEntity extends BlackWidowEntity {
         }
         if (broodMotherCount > 0) return false;
 
-        return Monster.checkMonsterSpawnRules((EntityType<? extends Monster>) (EntityType<?>) entityType, level, spawnType, pos, random);
+        return Animal.checkAnimalSpawnRules(entityType, level, spawnType, pos, random);
     }
 }

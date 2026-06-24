@@ -10,6 +10,8 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
+import net.minecraft.world.item.Items;
+
 public class ModCreativeModeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, WebOfLies.MODID);
@@ -21,6 +23,11 @@ public class ModCreativeModeTabs {
                         pOutput.accept(ModBlocks.HOMEWARD_COBWEB.get());
                         pOutput.accept(ModBlocks.HAUNTED_COBWEB.get());
                         pOutput.accept(ModBlocks.SPIDERWEB.get());
+                        pOutput.accept(ModBlocks.SPIDER_ROOT_LOG.get());
+                        pOutput.accept(ModBlocks.SPIDER_ROOT_PLANKS.get());
+                        pOutput.accept(ModBlocks.SPIDER_ROOT_LEAVES.get());
+                        pOutput.accept(ModBlocks.SPIDER_ROOT_SAPLING.get());
+                        pOutput.accept(ModBlocks.GOOSE_BERRY_BUSH.get());
                     })
                     .build());
 
@@ -29,6 +36,9 @@ public class ModCreativeModeTabs {
                     .title(Component.translatable("creativetab.weboflies.items"))
                     .displayItems((pParameters, pOutput) -> {
                         pOutput.accept(ModItems.THREAD_OF_FATE.get());
+                        pOutput.accept(ModItems.GOOSE_BERRY.get());
+                        pOutput.accept(Items.SPIDER_EYE);
+                        pOutput.accept(Items.FERMENTED_SPIDER_EYE);
                     })
                     .build());
 

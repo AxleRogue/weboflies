@@ -5,6 +5,63 @@ All notable changes to the **Web Of Lies** mod will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1-beta] - 2026-06-23
+
+### Added
+- **Known Issues:**
+    - **Biome Music:** Custom background music is currently not playing in the modded biomes. This is a known issue and will be fixed in the next patch or update.
+- **Spider Root Trees:**
+    - New custom tree type: **Spider Root Tree**.
+    - Blocks: `Spider Root Log`, `Spider Root Planks`, `Spider Root Leaves`, and `Spider Root Sapling`.
+    - Features:
+        - 4x4 "Mega Tree" variant using `mega_jungle_trunk_placer` and `blob_foliage_placer`.
+        - Rotatable logs (RotatedPillarBlock).
+        - Waterloggable leaves that do not decay unless the trunk is removed.
+        - Full flammability and fire-spreading support for all wood blocks.
+- **New Vegetation:**
+    - **Goose Berry Bush:** Renamed from Snowberry Bush. A harvestable source of Goose Berries.
+- **Spider Root Trees:**
+    - Added **Spider Root Swamp Tree** variant with climbing jungle vines on its trunk.
+    - Restricted all Spider Root tree generation exclusively to the custom biome.
+- **World Generation:**
+    - Fixed the Dark Forest dimension using standard Overworld noise settings; updated to **Amplified** noise for a more thematic landscape.
+- **Gameplay & AI:**
+    - **Animal Status:** Black Widows and Baby Black Widows now extend `Animal` and implement `Enemy`. Registered as `CREATURE` category.
+    - **Day/Night Cycle:** Spiders are now peaceful during the day and become aggressive towards players/golems only at night.
+    - **Mini-Boss Persistence:** The Brood Mother remains always aggressive and maintains her status as a mini-boss.
+    - **Advanced Breeding:** Spiders can now be bred with Goose Berries or Fermented Spider Eyes.
+    - **Nesting Behavior:** Pregnant spiders now build cobweb nests and lay a clutch of 1-3 eggs.
+    - **Guard AI:** Spiders will now stay near and aggressively defend their nests from players.
+    - **Harvesting AI:** Spiders can now harvest Goose Berries from bushes to self-breed.
+- **Items:**
+    - **Goose Berry:** A new food item used for player nutrition and spider breeding.
+- **Advancements:**
+    - Expanded the advancement tree with new entries for Goose Berries, Breeding, and specialized monster hunting.
+    - Guides players through the new dimension's unique mechanics.
+- **Networking & UI:**
+    - Added a biome entry announcement system.
+    - Players now receive a "Spider Root Forest" title on their screen when entering the biome.
+- **Entity Framework:**
+    - Implemented `BaseSpiderEntity`, `BaseSpiderModel`, and `BaseSpiderRenderer` to standardize custom spider logic.
+    - Integrated automatic spider jockey prevention into the base entity class.
+- **Mob Dismemberment System:**
+    - Inspired by the "Mob Dismemberment" mod, custom spiders now physically break apart upon death.
+    - Added `SpiderGibEntity` and `SpiderGibRenderer` to handle the physics and rendering of severed spider parts (Head, Body, Legs).
+    - Integrated dismemberment triggers into `StoryEvents` to ensure only mod-specific spiders are affected.
+
+### Changed
+- **Spider Egg Mechanics:** Hatch time increased to 1 full Minecraft day, and they now only hatch in the morning.
+- **World Generation:**
+    - Replaced vanilla `Giant Dark Oak` trees with the custom `Spider Root Trees` in the Spider Root Forest biome.
+    - Renamed and swapped biome identities: "Spider Root Forest" is now the dense variant, and "Poison Fang Swamp" is the murky swamp variant.
+    - Updated biome colors: **Acid Green** water, **Dark Swamp Green** sky, and **Dark Swamp Green** grass.
+    - Updated `spiderweb_generation` to be less frequent and restricted to trees/bushes in clusters of 3-6.
+    - Integrated lily pads, grass, and mushrooms into the Dark Forest biome generation.
+- **Assets:**
+    - Added custom textures, models, and blockstates for all Spider Root wood blocks.
+    - Included a custom texture for the Spider Root Sapling.
+    - Updated creative tabs to include all new blocks and items.
+
 ## [1.0.0-beta] - 2026-06-22
 
 ### Changed

@@ -1,6 +1,5 @@
 package me.axlerogue.weboflies.entity.renderer;
 
-import me.axlerogue.weboflies.entity.BabyBlackWidowEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.axlerogue.weboflies.entity.BlackWidowEntity;

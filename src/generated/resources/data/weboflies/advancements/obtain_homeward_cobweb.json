@@ -1,0 +1,38 @@
+{
+  "parent": "weboflies:obtain_thread_of_fate",
+  "criteria": {
+    "has_homeward_cobweb": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "weboflies:homeward_cobweb"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.obtain_homeward_cobweb.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "weboflies:homeward_cobweb"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.obtain_homeward_cobweb.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_homeward_cobweb"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

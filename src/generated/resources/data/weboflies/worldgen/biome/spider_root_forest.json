@@ -1,0 +1,69 @@
+{
+  "carvers": {},
+  "downfall": 0.8,
+  "effects": {
+    "fog_color": 0,
+    "foliage_color": 2833702,
+    "grass_color": 2833702,
+    "music": {
+      "max_delay": 0,
+      "min_delay": 1,
+      "replace_current_music": true,
+      "sound": "weboflies:spider_root_forest_music"
+    },
+    "sky_color": 2833702,
+    "water_color": 3329330,
+    "water_fog_color": 329011
+  },
+  "features": [
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [],
+    [
+      "weboflies:spider_root_tree_placed",
+      "weboflies:spider_web_placed",
+      "weboflies:goose_berry_bush_placed",
+      "weboflies:spider_root_bush_placed",
+      "weboflies:grass_placed",
+      "weboflies:tall_grass_placed"
+    ]
+  ],
+  "has_precipitation": true,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "weboflies:black_widow",
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 100
+      },
+      {
+        "type": "weboflies:baby_black_widow",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 50
+      },
+      {
+        "type": "weboflies:black_widow_brood_mother",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.5
+}

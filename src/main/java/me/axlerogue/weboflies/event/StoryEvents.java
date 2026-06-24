@@ -6,6 +6,7 @@ import me.axlerogue.weboflies.entity.BlackWidowEntity;
 import me.axlerogue.weboflies.entity.SpiderEgg;
 import me.axlerogue.weboflies.entity.BabyBlackWidowEntity;
 import me.axlerogue.weboflies.entity.CorpseEntity;
+import me.axlerogue.weboflies.entity.SpiderGibEntity;
 import me.axlerogue.weboflies.entity.client.ModEntities;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -15,7 +16,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.event.entity.EntityJoinLevelEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -23,6 +23,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.event.TickEvent;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.ChatFormatting;
+import me.axlerogue.weboflies.network.ModMessages;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -31,6 +32,7 @@ public class StoryEvents {
     private static final ResourceKey<Level> DARK_FOREST_KEY = ResourceKey.create(Registries.DIMENSION, new ResourceLocation(WebOfLies.MODID, "dark_forest"));
     private static final Random RANDOM = new Random();
     private static final Map<UUID, Integer> MUMBLE_COOLDOWNS = new HashMap<>();
+    private static final Map<UUID, ResourceLocation> LAST_PLAYER_BIOME = new HashMap<>();
     private static final Queue<BroadcastMessage> MESSAGE_QUEUE = new ConcurrentLinkedQueue<>();
     private static int broadcastTimer = 0;
 
@@ -72,8 +74,24 @@ public class StoryEvents {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide) {
             Player player = event.player;
+            UUID uuid = player.getUUID();
+
+            // Biome Change Detection
+            ResourceLocation currentBiome = player.level().getBiome(player.blockPosition()).unwrapKey().map(ResourceKey::location).orElse(null);
+            ResourceLocation lastBiome = LAST_PLAYER_BIOME.get(uuid);
+
+            if (currentBiome != null && !currentBiome.equals(lastBiome)) {
+                LAST_PLAYER_BIOME.put(uuid, currentBiome);
+                if (currentBiome.equals(new ResourceLocation(WebOfLies.MODID, "spider_root_forest"))) {
+                    ModMessages.sendToPlayer(new ModMessages.ClientboundBiomeMessagePacket(
+                            Component.literal("Spider Root Forest").withStyle(ChatFormatting.RED, ChatFormatting.BOLD)), (ServerPlayer) player);
+                } else if (currentBiome.equals(new ResourceLocation(WebOfLies.MODID, "poison_fang_swamp"))) {
+                    ModMessages.sendToPlayer(new ModMessages.ClientboundBiomeMessagePacket(
+                            Component.literal("Poison Fang Swamp").withStyle(ChatFormatting.GREEN, ChatFormatting.BOLD)), (ServerPlayer) player);
+                }
+            }
+
             if (player.level().dimension() == DARK_FOREST_KEY) {
-                UUID uuid = player.getUUID();
                 int cooldown = MUMBLE_COOLDOWNS.getOrDefault(uuid, 0);
                 if (cooldown > 0) {
                     MUMBLE_COOLDOWNS.put(uuid, cooldown - 1);
@@ -143,6 +161,31 @@ public class StoryEvents {
                     corpse.setYRot(event.getEntity().getYRot());
                     level.addFreshEntity(corpse);
                 }
+
+                // Dismemberment - spawn gibs
+                spawnGibs(level, event.getEntity().getX(), event.getEntity().getY() + 0.5, event.getEntity().getZ(), scale);
+            }
+        }
+    }
+
+    private static void spawnGibs(Level level, double x, double y, double z, float scale) {
+        String[] parts = {"head", "body0", "body1", "leg", "leg", "leg", "leg", "leg", "leg", "leg", "leg"};
+        for (String part : parts) {
+            SpiderGibEntity gib = ModEntities.SPIDER_GIB.get().create(level);
+            if (gib != null) {
+                gib.setPartType(part);
+                gib.setEntityScale(scale);
+                gib.setPos(x, y, z);
+                
+                // Random explosion-like movement
+                double speed = 0.2 * scale;
+                gib.setDeltaMovement(
+                    (RANDOM.nextDouble() - 0.5) * speed,
+                    RANDOM.nextDouble() * speed,
+                    (RANDOM.nextDouble() - 0.5) * speed
+                );
+                
+                level.addFreshEntity(gib);
             }
         }
     }

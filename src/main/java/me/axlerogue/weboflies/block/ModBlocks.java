@@ -13,9 +13,14 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.block.RotatedPillarBlock;
+import net.minecraft.world.level.block.SaplingBlock;
+import net.minecraft.world.level.block.grower.AbstractTreeGrower;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
+import net.minecraft.util.RandomSource;
+import org.jetbrains.annotations.Nullable;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -90,9 +95,38 @@ public class ModBlocks {
                     .sound(SoundType.SCAFFOLDING)
                     .pushReaction(PushReaction.DESTROY)));
 
+    public static final RegistryObject<Block> SPIDER_ROOT_LOG = registerBlock("spider_root_log",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LOG).mapColor(MapColor.WOOD)));
+
+    public static final RegistryObject<Block> SPIDER_ROOT_PLANKS = registerBlock("spider_root_planks",
+            () -> new Block(BlockBehaviour.Properties.copy(Blocks.OAK_PLANKS).mapColor(MapColor.WOOD)));
+
+    public static final RegistryObject<Block> SPIDER_ROOT_LEAVES = registerBlock("spider_root_leaves",
+            () -> new SpiderRootLeavesBlock(BlockBehaviour.Properties.copy(Blocks.OAK_LEAVES)
+                    .mapColor(MapColor.PLANT)
+                    .noOcclusion()));
+
+    public static final RegistryObject<Block> SPIDER_ROOT_SAPLING = registerBlock("spider_root_sapling",
+            () -> new SaplingBlock(new AbstractTreeGrower() {
+                @Nullable
+                @Override
+                protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource pRandom, boolean pHasFlowers) {
+                    return ResourceKey.create(net.minecraft.core.registries.Registries.CONFIGURED_FEATURE, new net.minecraft.resources.ResourceLocation(WebOfLies.MODID, "spider_root_tree"));
+                }
+            }, BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
+
+    public static final RegistryObject<Block> GOOSE_BERRY_BUSH = registerBlock("goose_berry_bush",
+            () -> new GooseBerryBushBlock(BlockBehaviour.Properties.copy(Blocks.SWEET_BERRY_BUSH)));
+
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block) {
         RegistryObject<T> toReturn = BLOCKS.register(name, block);
         registerBlockItem(name, toReturn);
+        return toReturn;
+    }
+
+    private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block, java.util.function.Function<RegistryObject<T>, RegistryObject<Item>> itemFactory) {
+        RegistryObject<T> toReturn = BLOCKS.register(name, block);
+        itemFactory.apply(toReturn);
         return toReturn;
     }
 

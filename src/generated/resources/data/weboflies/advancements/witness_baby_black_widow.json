@@ -1,0 +1,40 @@
+{
+  "parent": "weboflies:kill_spider_egg",
+  "criteria": {
+    "killed_baby": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:baby_black_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.witness_baby_black_widow.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:spider_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.witness_baby_black_widow.title"
+    }
+  },
+  "requirements": [
+    [
+      "killed_baby"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

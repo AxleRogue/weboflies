@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:ghast_tear"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SGS",
+    "SSS"
+  ],
+  "result": {
+    "item": "weboflies:thread_of_fate"
+  },
+  "show_notification": true
+}

@@ -1,0 +1,38 @@
+{
+  "parent": "weboflies:kill_black_widow",
+  "criteria": {
+    "has_thread_of_fate": {
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "weboflies:thread_of_fate"
+            ]
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.obtain_thread_of_fate.description"
+    },
+    "frame": "task",
+    "hidden": false,
+    "icon": {
+      "item": "weboflies:thread_of_fate"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.obtain_thread_of_fate.title"
+    }
+  },
+  "requirements": [
+    [
+      "has_thread_of_fate"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

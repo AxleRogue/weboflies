@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "S": {
+      "item": "minecraft:string"
+    }
+  },
+  "pattern": [
+    "SSS",
+    "SNS",
+    "SSS"
+  ],
+  "result": {
+    "item": "weboflies:homeward_cobweb"
+  },
+  "show_notification": true
+}

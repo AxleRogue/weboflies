@@ -12,6 +12,7 @@ public class ModSounds {
     public static final DeferredRegister<SoundEvent> SOUND_EVENTS =
             DeferredRegister.create(ForgeRegistries.SOUND_EVENTS, WebOfLies.MODID);
 
+    public static final RegistryObject<SoundEvent> POISON_FANG_SWAMP_MUSIC = registerSoundEvents("poison_fang_swamp_music");
     public static final RegistryObject<SoundEvent> SPIDER_ROOT_FOREST_MUSIC = registerSoundEvents("spider_root_forest_music");
 
     private static RegistryObject<SoundEvent> registerSoundEvents(String name) {

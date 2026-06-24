@@ -1,13 +1,17 @@
 package me.axlerogue.weboflies.entity;
 
-import me.axlerogue.weboflies.entity.client.ModEntities;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.level.ServerLevelAccessor;
+import net.minecraft.tags.BlockTags;
+import me.axlerogue.weboflies.entity.client.ModEntities;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.LivingEntity;
@@ -16,11 +20,15 @@ import net.minecraft.world.level.Level;
 
 public class SpiderEgg extends LivingEntity {
     private int hatchTicks = 0;
-    private static final int HATCH_TIME = 12000; // Half a Minecraft day
+    private static final int HATCH_TIME = 24000; // 1 whole Minecraft day
     private String parentType = "weboflies:black_widow";
 
     public SpiderEgg(EntityType<? extends LivingEntity> type, Level level) {
         super(type, level);
+    }
+
+    public static boolean checkSpiderEggSpawnRules(EntityType<? extends LivingEntity> type, ServerLevelAccessor level, MobSpawnType spawnType, BlockPos pos, RandomSource random) {
+        return level.getBlockState(pos.below()).is(BlockTags.ANIMALS_SPAWNABLE_ON) || level.getBlockState(pos.below()).is(BlockTags.LEAVES);
     }
 
     public void setParentType(String type) {
@@ -36,7 +44,8 @@ public class SpiderEgg extends LivingEntity {
         super.tick();
         if (!this.level().isClientSide) {
             hatchTicks++;
-            if (hatchTicks >= HATCH_TIME) {
+            // Hatch if it has been at least HATCH_TIME and it's morning (between 0 and 1000)
+            if (hatchTicks >= HATCH_TIME && this.level().getDayTime() % 24000 < 1000) {
                 hatch();
             }
         }

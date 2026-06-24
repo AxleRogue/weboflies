@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:survives_explosion"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "weboflies:homeward_cobweb"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "weboflies:blocks/homeward_cobweb"
+}

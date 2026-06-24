@@ -1,0 +1,7 @@
+{
+  "ambient_light": 0.0,
+  "fog_type": "normal",
+  "has_ceiling": false,
+  "has_sky_light": true,
+  "sky_type": "normal"
+}

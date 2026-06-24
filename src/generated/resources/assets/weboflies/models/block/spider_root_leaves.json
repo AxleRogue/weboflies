@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "weboflies:block/spider_root_leaves"
+  }
+}

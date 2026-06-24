@@ -4,7 +4,6 @@ import me.axlerogue.weboflies.WebOfLies;
 import me.axlerogue.weboflies.entity.BlackWidowEntity;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.entity.SpiderRenderer;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -12,11 +11,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.client.model.SpiderModel;
 
-import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.util.Mth;
-import org.joml.Matrix4f;
-
-public class BlackWidowRenderer extends SpiderRenderer<BlackWidowEntity> {
+public class BlackWidowRenderer extends BaseSpiderRenderer<BlackWidowEntity> {
     public static final ResourceLocation BLACK_WIDOW_LOCATION = new ResourceLocation(WebOfLies.MODID, "textures/entity/spiders/black_widow.png");
     public static final ResourceLocation BLACK_WIDOW_NIGHT_HUNT = new ResourceLocation(WebOfLies.MODID, "textures/entity/spiders/black_widow_night_hunt.png");
     public static final ResourceLocation GLOW_TINT = new ResourceLocation(WebOfLies.MODID, "textures/entity/glow_tint.png");

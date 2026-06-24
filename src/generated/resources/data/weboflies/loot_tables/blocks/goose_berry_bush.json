@@ -1,0 +1,71 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
+    }
+  ],
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "weboflies:goose_berry_bush",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "age": "3"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "weboflies:goose_berry"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "weboflies:goose_berry_bush",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "age": "2"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 2.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "weboflies:goose_berry"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "weboflies:blocks/goose_berry_bush"
+}

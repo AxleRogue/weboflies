@@ -10,6 +10,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.network.NetworkEvent;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.simple.SimpleChannel;
@@ -41,6 +42,12 @@ public class ModMessages {
                 .decoder(ClientboundCobwebListPacket::new)
                 .encoder(ClientboundCobwebListPacket::toBytes)
                 .consumerMainThread(ClientboundCobwebListPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(ClientboundBiomeMessagePacket.class, id())
+                .decoder(ClientboundBiomeMessagePacket::new)
+                .encoder(ClientboundBiomeMessagePacket::toBytes)
+                .consumerMainThread(ClientboundBiomeMessagePacket::handle)
                 .add();
     }
 
@@ -120,6 +127,31 @@ public class ModMessages {
             context.enqueueWork(() -> {
                 // Handle on client side
                 me.axlerogue.weboflies.client.ClientPacketHandler.handleCobwebList(cobwebs);
+            });
+            return true;
+        }
+    }
+
+    public static class ClientboundBiomeMessagePacket {
+        private final Component message;
+
+        public ClientboundBiomeMessagePacket(Component message) {
+            this.message = message;
+        }
+
+        public ClientboundBiomeMessagePacket(FriendlyByteBuf buf) {
+            this.message = buf.readComponent();
+        }
+
+        public void toBytes(FriendlyByteBuf buf) {
+            buf.writeComponent(message);
+        }
+
+        public boolean handle(Supplier<NetworkEvent.Context> supplier) {
+            NetworkEvent.Context context = supplier.get();
+            context.enqueueWork(() -> {
+                // Handle on client side
+                me.axlerogue.weboflies.client.ClientPacketHandler.handleBiomeMessage(message);
             });
             return true;
         }
