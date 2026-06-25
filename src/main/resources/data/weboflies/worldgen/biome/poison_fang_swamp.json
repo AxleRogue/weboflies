@@ -2,15 +2,9 @@
   "carvers": {},
   "downfall": 0.8,
   "effects": {
-    "fog_color": 0,
+    "fog_color": 2631720,
     "foliage_color": 2833702,
     "grass_color": 2833702,
-    "music": {
-      "max_delay": 0,
-      "min_delay": 1,
-      "replace_current_music": true,
-      "sound": "weboflies:poison_fang_swamp_music"
-    },
     "sky_color": 2833702,
     "water_color": 3329330,
     "water_fog_color": 329011
@@ -44,15 +38,27 @@
     "creature": [
       {
         "type": "weboflies:black_widow",
-        "maxCount": 4,
-        "minCount": 2,
+        "maxCount": 12,
+        "minCount": 8,
         "weight": 100
       },
       {
+        "type": "weboflies:brown_widow",
+        "maxCount": 12,
+        "minCount": 8,
+        "weight": 80
+      },
+      {
         "type": "weboflies:baby_black_widow",
-        "maxCount": 2,
-        "minCount": 1,
+        "maxCount": 8,
+        "minCount": 6,
         "weight": 50
+      },
+      {
+        "type": "weboflies:baby_brown_widow",
+        "maxCount": 8,
+        "minCount": 6,
+        "weight": 40
       },
       {
         "type": "weboflies:black_widow_brood_mother",

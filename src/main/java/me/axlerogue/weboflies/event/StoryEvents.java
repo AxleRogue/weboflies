@@ -1,29 +1,34 @@
 package me.axlerogue.weboflies.event;
 
 import me.axlerogue.weboflies.WebOfLies;
-import me.axlerogue.weboflies.entity.BlackWidowBroodMotherEntity;
-import me.axlerogue.weboflies.entity.BlackWidowEntity;
-import me.axlerogue.weboflies.entity.SpiderEgg;
-import me.axlerogue.weboflies.entity.BabyBlackWidowEntity;
-import me.axlerogue.weboflies.entity.CorpseEntity;
-import me.axlerogue.weboflies.entity.SpiderGibEntity;
+import me.axlerogue.weboflies.entity.*;
 import me.axlerogue.weboflies.entity.client.ModEntities;
+import me.axlerogue.weboflies.entity.renderer.BlackWidowRenderer;
+import me.axlerogue.weboflies.entity.renderer.BrownWidowRenderer;
+import me.axlerogue.weboflies.network.ModMessages;
+import me.axlerogue.weboflies.world.ModBiomes;
+import me.axlerogue.weboflies.world.ModWorldPresets;
+import net.minecraft.ChatFormatting;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
+import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.event.TickEvent;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.ChatFormatting;
-import me.axlerogue.weboflies.network.ModMessages;
+
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -75,9 +80,15 @@ public class StoryEvents {
         if (event.phase == TickEvent.Phase.END && !event.player.level().isClientSide) {
             Player player = event.player;
             UUID uuid = player.getUUID();
+            Level level = player.level();
+            BlockPos pos = player.blockPosition();
+
+            if (!isEffectEnabled(level, pos)) {
+                return;
+            }
 
             // Biome Change Detection
-            ResourceLocation currentBiome = player.level().getBiome(player.blockPosition()).unwrapKey().map(ResourceKey::location).orElse(null);
+            ResourceLocation currentBiome = level.getBiome(pos).unwrapKey().map(ResourceKey::location).orElse(null);
             ResourceLocation lastBiome = LAST_PLAYER_BIOME.get(uuid);
 
             if (currentBiome != null && !currentBiome.equals(lastBiome)) {
@@ -91,15 +102,13 @@ public class StoryEvents {
                 }
             }
 
-            if (player.level().dimension() == DARK_FOREST_KEY) {
-                int cooldown = MUMBLE_COOLDOWNS.getOrDefault(uuid, 0);
-                if (cooldown > 0) {
-                    MUMBLE_COOLDOWNS.put(uuid, cooldown - 1);
-                } else {
-                    if (RANDOM.nextInt(12000) == 0) { // Average once every 10 mins at 20tps
-                        player.sendSystemMessage(Component.literal(MUMBLE_MESSAGES[RANDOM.nextInt(MUMBLE_MESSAGES.length)]).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
-                        MUMBLE_COOLDOWNS.put(uuid, 6000); // 5 min minimum cooldown
-                    }
+            int cooldown = MUMBLE_COOLDOWNS.getOrDefault(uuid, 0);
+            if (cooldown > 0) {
+                MUMBLE_COOLDOWNS.put(uuid, cooldown - 1);
+            } else {
+                if (RANDOM.nextInt(12000) == 0) { // Average once every 10 mins at 20tps
+                    player.sendSystemMessage(Component.literal(MUMBLE_MESSAGES[RANDOM.nextInt(MUMBLE_MESSAGES.length)]).withStyle(ChatFormatting.ITALIC, ChatFormatting.GRAY));
+                    MUMBLE_COOLDOWNS.put(uuid, 6000); // 5 min minimum cooldown
                 }
             }
         }
@@ -113,7 +122,13 @@ public class StoryEvents {
 
     @SubscribeEvent
     public static void onEntityDeath(LivingDeathEvent event) {
-        if (!event.getEntity().level().isClientSide && event.getSource().getEntity() instanceof Player player) {
+        Level level = event.getEntity().level();
+        if (level.isClientSide) return;
+        
+        BlockPos deathPos = event.getEntity().blockPosition();
+        boolean effectEnabled = isEffectEnabled(level, deathPos);
+
+        if (event.getSource().getEntity() instanceof Player player && effectEnabled) {
             if (event.getEntity() instanceof BlackWidowBroodMotherEntity) {
                 player.sendSystemMessage(Component.literal("The Matriarch falls, but the web remains..."));
                 queueKillMessage(player, "has slain the Black Widow Brood Mother!");
@@ -122,70 +137,17 @@ public class StoryEvents {
                     player.sendSystemMessage(Component.literal("Another thread snapped."));
                 }
                 queueKillMessage(player, "has terminated a Black Widow.");
+            } else if (event.getEntity() instanceof BrownWidowEntity && !(event.getEntity() instanceof BabyBrownWidowEntity)) {
+                if (RANDOM.nextInt(10) == 0) {
+                    player.sendSystemMessage(Component.literal("A male falls, but the colony persists."));
+                }
+                queueKillMessage(player, "has terminated a Brown Widow.");
             } else if (event.getEntity() instanceof SpiderEgg) {
                 player.sendSystemMessage(Component.literal("A future nightmare extinguished."));
                 queueKillMessage(player, "has crushed a Spider Egg.");
-            } else if (event.getEntity() instanceof BabyBlackWidowEntity) {
+            } else if (event.getEntity() instanceof BabyBlackWidowEntity || event.getEntity() instanceof BabyBrownWidowEntity) {
                 player.sendSystemMessage(Component.literal("Cruel... but necessary."));
-                queueKillMessage(player, "has squashed a Baby Black Widow.");
-            }
-        }
-
-        // Corpse spawning logic
-        Level level = event.getEntity().level();
-        if (!level.isClientSide && level.dimension() == DARK_FOREST_KEY) {
-            boolean shouldSpawnCorpse = false;
-            String type = "black_widow";
-            float scale = 1.0f;
-
-            if (event.getEntity() instanceof BlackWidowBroodMotherEntity) {
-                shouldSpawnCorpse = true;
-                type = "brood_mother";
-                scale = 3.0f;
-            } else if (event.getEntity() instanceof BabyBlackWidowEntity) {
-                shouldSpawnCorpse = true;
-                type = "baby_black_widow";
-                scale = 0.3f;
-            } else if (event.getEntity() instanceof BlackWidowEntity) {
-                shouldSpawnCorpse = true;
-                type = "black_widow";
-                scale = 1.0f;
-            }
-
-            if (shouldSpawnCorpse) {
-                CorpseEntity corpse = ModEntities.CORPSE.get().create(level);
-                if (corpse != null) {
-                    corpse.setModelType(type);
-                    corpse.setEntityScale(scale);
-                    corpse.setPos(event.getEntity().getX(), event.getEntity().getY(), event.getEntity().getZ());
-                    corpse.setYRot(event.getEntity().getYRot());
-                    level.addFreshEntity(corpse);
-                }
-
-                // Dismemberment - spawn gibs
-                spawnGibs(level, event.getEntity().getX(), event.getEntity().getY() + 0.5, event.getEntity().getZ(), scale);
-            }
-        }
-    }
-
-    private static void spawnGibs(Level level, double x, double y, double z, float scale) {
-        String[] parts = {"head", "body0", "body1", "leg", "leg", "leg", "leg", "leg", "leg", "leg", "leg"};
-        for (String part : parts) {
-            SpiderGibEntity gib = ModEntities.SPIDER_GIB.get().create(level);
-            if (gib != null) {
-                gib.setPartType(part);
-                gib.setEntityScale(scale);
-                gib.setPos(x, y, z);
-                
-                // Random explosion-like movement
-                double speed = 0.2 * scale;
-                gib.setDeltaMovement(
-                    (RANDOM.nextDouble() - 0.5) * speed,
-                    RANDOM.nextDouble() * speed,
-                    (RANDOM.nextDouble() - 0.5) * speed
-                );
-                
-                level.addFreshEntity(gib);
+                queueKillMessage(player, "has squashed a baby spider.");
             }
         }
     }
@@ -194,7 +156,9 @@ public class StoryEvents {
     public static void onBlockBreak(BlockEvent.BreakEvent event) {
         if (!event.getLevel().isClientSide()) {
             Player player = event.getPlayer();
-            if (player.level().dimension() == DARK_FOREST_KEY) {
+            Level level = player.level();
+            BlockPos pos = event.getPos();
+            if (isEffectEnabled(level, pos)) {
                 if (event.getState().is(Blocks.DARK_OAK_LOG) || event.getState().is(Blocks.DARK_OAK_WOOD)) {
                     if (RANDOM.nextInt(50) == 0) {
                         player.sendSystemMessage(Component.literal("The wood here screams of ancient lies."));
@@ -211,11 +175,33 @@ public class StoryEvents {
     @SubscribeEvent
     public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
         if (!event.getLevel().isClientSide() && event.getEntity() instanceof Player player) {
-            if (player.level().dimension() == DARK_FOREST_KEY) {
+            Level level = player.level();
+            BlockPos pos = event.getPos();
+            if (isEffectEnabled(level, pos)) {
                 if (RANDOM.nextInt(100) == 0) {
                     player.sendSystemMessage(Component.literal("Building a home in a graveyard of lies?"));
                 }
             }
         }
+    }
+
+    private static boolean isEffectEnabled(Level level, BlockPos pos) {
+        // Must be in our custom world preset
+        Optional<? extends Registry<WorldPreset>> worldPresets = level.registryAccess().registry(Registries.WORLD_PRESET);
+        if (worldPresets.isEmpty()) return false;
+        
+        Holder<WorldPreset> preset = worldPresets.get().getHolder(ModWorldPresets.WEB_OF_LIES).orElse(null);
+        if (preset == null) return false;
+
+        // Must be in our custom dimension
+        if (level.dimension() != DARK_FOREST_KEY) return false;
+
+        // Must be in our custom biomes
+        if (pos != null) {
+            Holder<Biome> biome = level.getBiome(pos);
+            return biome.is(ModBiomes.SPIDER_ROOT_FOREST) || biome.is(ModBiomes.POISON_FANG_SWAMP);
+        }
+
+        return false;
     }
 }

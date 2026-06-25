@@ -5,11 +5,52 @@ All notable changes to the **Web Of Lies** mod will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.2-beta] - 2026-06-25
+
+### Added
+- **Gender & Breeding System:**
+    - Introduced a comprehensive gender system with `MaleBaseSpider` and `FemaleBaseSpider`.
+    - **Brown Widows & Baby Brown Widows:** New male spider variants that seek out mates.
+    - **Advanced Mating:** Females (Black Widows) can now become "pregnant" after mating with males, leading to nesting and egg-laying behaviors.
+- **Improved Spider Eggs:**
+    - Eggs now hatch into randomized male or female offspring.
+    - Brood Mother eggs now hatch directly into adult Black or Brown Widows.
+- **New Advancements:**
+    - Added advancements for slaying Brown Widows and Baby Brown Widows.
+    - New challenge advancement: "Breeding Program" for successfully breeding spiders.
+- **Sound Events:** Defined custom sound events for biome music in `sounds.json`.
+- **World Preset:** Introduced the "WebOfLies" world type. Players can now select this world type during world creation to experience the "Web Of Lies" dimension as the primary world.
+- **Dedicated Datagen Source Set:** Reorganized the project structure to include a separate `datagen` source set, resolving split-package issues and improving build efficiency.
+
+### Changed
+- **Unified Rendering:** Refactored `BaseSpiderModel` and `BaseSpiderRenderer` to be used by all spider variants.
+- **Glow Light Optimization:** Expanded the dynamic glowing light effect to support all new spider variants.
+- **Project Structure:** Removed the `datagen` system and moved all generated resources to the main directory for a cleaner project layout.
+- **Codebase Refactoring:** Performed a massive cleanup of the entire codebase (both `main` and `datagen`). Removed unused imports, replaced fully qualified names with proper imports, and optimized code structure for better readability and maintenance.
+- **Dimension Entry:** Disabled the legacy teleportation mechanic where right-clicking a vanilla cobweb would transport the player. Entry to the dimension is now handled via the "WebOfLies" world type.
+- **Biome Music:** Refined music playback logic with shorter delays and immediate replacement of current music when changing biomes.
+
+### Fixed
+- **World Preset Crash:** Resolved "Overworld settings missing" crash by correctly configuring `LevelStem.OVERWORLD` in the world preset.
+- **World Type Visibility:** Fixed the world preset not appearing in the menu by properly tagging it and referencing the correct registry keys.
+- **Early-Game Crash:** Fixed a client-side crash in fog and story events where the `WORLD_PRESET` registry was accessed before full initialization.
+- **Music Logic:** Cleaned up music event handling to prevent compilation errors and ensure smooth biome-specific audio transitions.
+- **Music Override Fix:** Implemented a client-side music handler (`ClientMusicEvents`) that actively blocks Minecraft's default music tracks from playing while the player is within the mod's custom biomes. This ensures that only the intended "Web Of Lies" atmospheric music is heard.
+- **Music Playback Frequency:** Further reduced the delay between music tracks in custom biomes (5-30 seconds) to provide a more consistent and immersive auditory experience.
+- **Split-Package Conflict:** Fixed `java.lang.module.ResolutionException` by separating data generation code from the runtime mod.
+- **Project Stability:** Verified that all registries and data providers are correctly linked after the refactoring.
+- **Feature Cleanup:** Removed the legacy dismemberment (gib) system and the dynamic health nametag feature to streamline the experience and improve performance.
+
+## [1.0.1-beta-patch-1] - 2026-06-24
+
+### Fixed
+- **Mob Dismemberment:** Fixed a bug where spider heads were being multiplied by 2 during the dismemberment process.
+- **Corpse Rendering:** Optimized the corpse system to handle part rendering more efficiently.
+- **Biome Music:** Fixed an issue where custom biome music would not play due to incorrect playback delay settings and ensured data generation correctly applies these changes.
+
 ## [1.0.1-beta] - 2026-06-23
 
 ### Added
-- **Known Issues:**
-    - **Biome Music:** Custom background music is currently not playing in the modded biomes. This is a known issue and will be fixed in the next patch or update.
 - **Spider Root Trees:**
     - New custom tree type: **Spider Root Tree**.
     - Blocks: `Spider Root Log`, `Spider Root Planks`, `Spider Root Leaves`, and `Spider Root Sapling`.

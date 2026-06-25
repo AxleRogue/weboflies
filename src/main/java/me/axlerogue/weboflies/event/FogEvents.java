@@ -1,47 +1,84 @@
 package me.axlerogue.weboflies.event;
 
 import me.axlerogue.weboflies.WebOfLies;
+import me.axlerogue.weboflies.world.ModBiomes;
+import me.axlerogue.weboflies.world.ModWorldPresets;
 import net.minecraft.client.Minecraft;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.levelgen.presets.WorldPreset;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ViewportEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Optional;
+
 @Mod.EventBusSubscriber(modid = WebOfLies.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class FogEvents {
-    private static final ResourceLocation DARK_FOREST_DIM = new ResourceLocation(WebOfLies.MODID, "dark_forest");
+    private static final ResourceKey<Level> DARK_FOREST_KEY = ResourceKey.create(Registries.DIMENSION,
+            new ResourceLocation(WebOfLies.MODID, "dark_forest"));
 
     @SubscribeEvent
     public static void onFogColor(ViewportEvent.ComputeFogColor event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null && mc.level.dimension().location().equals(DARK_FOREST_DIM)) {
-            float nightFactor = getNightFactor(mc.level);
-            if (nightFactor > 0) {
-                event.setRed(Mth.lerp(nightFactor, event.getRed(), 0.0F));
-                event.setGreen(Mth.lerp(nightFactor, event.getGreen(), 0.0F));
-                event.setBlue(Mth.lerp(nightFactor, event.getBlue(), 0.0F));
-            }
+        Level level = mc.level;
+        if (level == null) return;
+
+        if (!isFogEnabled(level, mc.player != null ? mc.player.blockPosition() : null)) return;
+
+        float nightFactor = getNightFactor(level);
+        if (nightFactor > 0) {
+            event.setRed(Mth.lerp(nightFactor, event.getRed(), 0.0F));
+            event.setGreen(Mth.lerp(nightFactor, event.getGreen(), 0.0F));
+            event.setBlue(Mth.lerp(nightFactor, event.getBlue(), 0.0F));
         }
     }
 
     @SubscribeEvent
     public static void onFogRender(ViewportEvent.RenderFog event) {
         Minecraft mc = Minecraft.getInstance();
-        if (mc.level != null && mc.level.dimension().location().equals(DARK_FOREST_DIM)) {
-            float nightFactor = getNightFactor(mc.level);
-            if (nightFactor > 0) {
-                float defaultNear = event.getNearPlaneDistance();
-                float defaultFar = event.getFarPlaneDistance();
+        Level level = mc.level;
+        if (level == null) return;
 
-                // Target night fog: 0.0F near, 15.0F far
-                event.setNearPlaneDistance(Mth.lerp(nightFactor, defaultNear, 0.0F));
-                event.setFarPlaneDistance(Mth.lerp(nightFactor, defaultFar, 15.0F));
-                event.setCanceled(true);
-            }
+        if (!isFogEnabled(level, mc.player != null ? mc.player.blockPosition() : null)) return;
+
+        float nightFactor = getNightFactor(level);
+        if (nightFactor > 0) {
+            float defaultNear = event.getNearPlaneDistance();
+            float defaultFar = event.getFarPlaneDistance();
+
+            // Target night fog: 0.0F near, 15.0F far
+            event.setNearPlaneDistance(Mth.lerp(nightFactor, defaultNear, 0.0F));
+            event.setFarPlaneDistance(Mth.lerp(nightFactor, defaultFar, 15.0F));
+            event.setCanceled(true);
         }
+    }
+
+    private static boolean isFogEnabled(Level level, net.minecraft.core.BlockPos pos) {
+        // Must be in our custom world preset
+        Optional<? extends Registry<WorldPreset>> worldPresets = level.registryAccess().registry(Registries.WORLD_PRESET);
+        if (worldPresets.isEmpty()) return false;
+        
+        Holder<WorldPreset> preset = worldPresets.get().getHolder(ModWorldPresets.WEB_OF_LIES).orElse(null);
+        if (preset == null) return false;
+
+        // Must be in our custom dimension
+        if (level.dimension() != DARK_FOREST_KEY) return false;
+
+        // Must be in our custom biomes
+        if (pos != null) {
+            Holder<Biome> biome = level.getBiome(pos);
+            return biome.is(ModBiomes.SPIDER_ROOT_FOREST) || biome.is(ModBiomes.POISON_FANG_SWAMP);
+        }
+
+        return false;
     }
 
     private static float getNightFactor(Level level) {

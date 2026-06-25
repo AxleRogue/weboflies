@@ -1,3 +1,6 @@
 {
-  "parent": "weboflies:block/homeward_cobweb"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "weboflies:block/homeward_cobweb"
+  }
 }

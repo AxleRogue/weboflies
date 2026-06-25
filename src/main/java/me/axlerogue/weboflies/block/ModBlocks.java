@@ -2,31 +2,29 @@ package me.axlerogue.weboflies.block;
 
 import me.axlerogue.weboflies.WebOfLies;
 import me.axlerogue.weboflies.item.ModItems;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.grower.AbstractTreeGrower;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.block.AirBlock;
-import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.minecraft.world.level.block.RotatedPillarBlock;
-import net.minecraft.world.level.block.SaplingBlock;
-import net.minecraft.world.level.block.grower.AbstractTreeGrower;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
-import net.minecraft.util.RandomSource;
-import org.jetbrains.annotations.Nullable;
-import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Supplier;
 
@@ -111,7 +109,7 @@ public class ModBlocks {
                 @Nullable
                 @Override
                 protected ResourceKey<ConfiguredFeature<?, ?>> getConfiguredFeature(RandomSource pRandom, boolean pHasFlowers) {
-                    return ResourceKey.create(net.minecraft.core.registries.Registries.CONFIGURED_FEATURE, new net.minecraft.resources.ResourceLocation(WebOfLies.MODID, "spider_root_tree"));
+                    return ResourceKey.create(Registries.CONFIGURED_FEATURE, new ResourceLocation(WebOfLies.MODID, "spider_root_tree"));
                 }
             }, BlockBehaviour.Properties.copy(Blocks.OAK_SAPLING)));
 
@@ -134,14 +132,14 @@ public class ModBlocks {
         return ModItems.ITEMS.register(name, () -> new BlockItem(block.get(), new Item.Properties()));
     }
 
-    public static void registerBlockColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Block event) {
+    public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
         event.register((state, level, pos, tintIndex) -> {
             GlowColor color = state.getValue(COLOR);
             return color == GlowColor.GREEN ? 0x32CD32 : 0xFF0000; // Lime Green or Red
         }, GLOW_LIGHT.get());
     }
 
-    public static void registerItemColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Item event) {
+    public static void registerItemColors(RegisterColorHandlersEvent.Item event) {
         event.register((stack, tintIndex) -> 0xFF0000, GLOW_LIGHT.get());
     }
 

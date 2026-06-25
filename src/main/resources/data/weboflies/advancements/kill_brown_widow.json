@@ -1,14 +1,14 @@
 {
-  "parent": "weboflies:kill_spider_egg",
+  "parent": "weboflies:root",
   "criteria": {
-    "killed_baby": {
+    "killed_brown_widow": {
       "conditions": {
         "entity": [
           {
             "condition": "minecraft:entity_properties",
             "entity": "this",
             "predicate": {
-              "type": "weboflies:baby_black_widow"
+              "type": "weboflies:brown_widow"
             }
           }
         ]
@@ -19,7 +19,7 @@
   "display": {
     "announce_to_chat": true,
     "description": {
-      "translate": "advancement.weboflies.witness_baby_black_widow.description"
+      "translate": "advancement.weboflies.kill_brown_widow.description"
     },
     "frame": "task",
     "hidden": false,
@@ -28,12 +28,12 @@
     },
     "show_toast": true,
     "title": {
-      "translate": "advancement.weboflies.witness_baby_black_widow.title"
+      "translate": "advancement.weboflies.kill_brown_widow.title"
     }
   },
   "requirements": [
     [
-      "killed_baby"
+      "killed_brown_widow"
     ]
   ],
   "sends_telemetry_event": true

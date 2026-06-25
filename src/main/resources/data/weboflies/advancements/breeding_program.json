@@ -1,0 +1,57 @@
+{
+  "parent": "weboflies:breed_black_widow",
+  "criteria": {
+    "bred_black_widow": {
+      "conditions": {
+        "child": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:bred_animals"
+    },
+    "bred_brown_widow": {
+      "conditions": {
+        "child": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:brown_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:bred_animals"
+    }
+  },
+  "display": {
+    "announce_to_chat": true,
+    "description": {
+      "translate": "advancement.weboflies.breeding_program.description"
+    },
+    "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "minecraft:fermented_spider_eye"
+    },
+    "show_toast": true,
+    "title": {
+      "translate": "advancement.weboflies.breeding_program.title"
+    }
+  },
+  "requirements": [
+    [
+      "bred_black_widow"
+    ],
+    [
+      "bred_brown_widow"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

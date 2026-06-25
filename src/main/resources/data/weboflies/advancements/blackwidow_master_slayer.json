@@ -1,127 +1,91 @@
 {
   "parent": "weboflies:kill_black_widow_brood_mother",
+  "criteria": {
+    "killed_baby": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:baby_black_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "killed_black_widow": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "killed_brood_mother": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:black_widow_brood_mother"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    },
+    "killed_egg": {
+      "conditions": {
+        "entity": [
+          {
+            "condition": "minecraft:entity_properties",
+            "entity": "this",
+            "predicate": {
+              "type": "weboflies:spider_egg"
+            }
+          }
+        ]
+      },
+      "trigger": "minecraft:player_killed_entity"
+    }
+  },
   "display": {
-    "icon": {
-      "item": "minecraft:netherite_sword"
-    },
-    "title": {
-      "translate": "advancement.weboflies.blackwidow_master_slayer.title"
-    },
+    "announce_to_chat": true,
     "description": {
       "translate": "advancement.weboflies.blackwidow_master_slayer.description"
     },
     "frame": "challenge",
+    "hidden": false,
+    "icon": {
+      "item": "weboflies:thread_of_fate"
+    },
     "show_toast": true,
-    "announce_to_chat": true,
-    "hidden": false
-  },
-  "criteria": {
-    "kill_black_widow": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:kill_black_widow": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "kill_spider_egg": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:kill_spider_egg": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "kill_black_widow_brood_mother": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:kill_black_widow_brood_mother": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "obtain_homeward_cobweb": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:obtain_homeward_cobweb": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "obtain_thread_of_fate": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:obtain_thread_of_fate": true
-              }
-            }
-          }
-        ]
-      }
-    },
-    "witness_baby_black_widow": {
-      "trigger": "minecraft:inventory_changed",
-      "conditions": {
-        "player": [
-          {
-            "condition": "minecraft:entity_properties",
-            "entity": "this",
-            "predicate": {
-              "advancements": {
-                "weboflies:witness_baby_black_widow": true
-              }
-            }
-          }
-        ]
-      }
+    "title": {
+      "translate": "advancement.weboflies.blackwidow_master_slayer.title"
     }
   },
   "requirements": [
-    ["kill_black_widow"],
-    ["kill_spider_egg"],
-    ["kill_black_widow_brood_mother"],
-    ["obtain_homeward_cobweb"],
-    ["obtain_thread_of_fate"],
-    ["witness_baby_black_widow"]
+    [
+      "killed_black_widow"
+    ],
+    [
+      "killed_egg"
+    ],
+    [
+      "killed_baby"
+    ],
+    [
+      "killed_brood_mother"
+    ]
   ],
-  "rewards": {
-    "experience": 2000
-  }
+  "sends_telemetry_event": true
 }

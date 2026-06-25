@@ -31,23 +31,11 @@ import java.util.List;
 
 import net.minecraft.world.level.block.Blocks;
 
-public class BlackWidowEntity extends BaseSpiderEntity {
+public class BlackWidowEntity extends FemaleBaseSpider {
     public static final int PREGNANT_TIME = 1200;
-    private int inLove;
-    private int matingCooldown;
-    private final SimpleContainer inventory = new SimpleContainer(1);
-    private BlockPos nestPos;
 
     public BlackWidowEntity(EntityType<? extends BlackWidowEntity> type, Level level) {
         super(type, level);
-    }
-
-    public void setNestPos(BlockPos pos) {
-        this.nestPos = pos;
-    }
-
-    public BlockPos getNestPos() {
-        return this.nestPos;
     }
 
     @Override
@@ -77,32 +65,15 @@ public class BlackWidowEntity extends BaseSpiderEntity {
     }
 
     private void findMate() {
-        List<BlackWidowEntity> potentialMates = this.level().getEntitiesOfClass(BlackWidowEntity.class, this.getBoundingBox().inflate(8.0D));
-        for (BlackWidowEntity mate : potentialMates) {
-            if (mate != this && mate.inLove > 0 && mate.matingCooldown <= 0) {
+        List<BaseSpiderEntity> potentialMates = this.level().getEntitiesOfClass(BaseSpiderEntity.class, this.getBoundingBox().inflate(8.0D));
+        for (BaseSpiderEntity mate : potentialMates) {
+            if (mate != this && this.canMate(mate) && mate.getInLove() > 0 && mate.getMatingCooldown() <= 0) {
                 this.setInLove(1200); // 1200 ticks to show they are "pregnant" / looking for a place to lay egg
                 mate.setInLove(0);
-                mate.matingCooldown = 12000;
+                mate.setMatingCooldown(12000);
                 this.level().broadcastEntityEvent(this, (byte) 18);
                 this.level().broadcastEntityEvent(mate, (byte) 18);
                 break;
-            }
-        }
-    }
-
-    private void spawnEgg(BlackWidowEntity mate) {
-        if (this.level() instanceof ServerLevel serverLevel) {
-            SpiderEgg egg = ModEntities.SPIDER_EGG.get().create(serverLevel);
-            if (egg != null) {
-                egg.setParentType(EntityType.getKey(this.getType()).toString());
-                egg.moveTo(this.getX(), this.getY(), this.getZ(), 0.0F, 0.0F);
-                serverLevel.addFreshEntity(egg);
-                this.inLove = 0;
-                mate.inLove = 0;
-                this.matingCooldown = 6000;
-                mate.matingCooldown = 6000;
-                serverLevel.broadcastEntityEvent(this, (byte) 18);
-                serverLevel.broadcastEntityEvent(mate, (byte) 18);
             }
         }
     }
@@ -126,45 +97,25 @@ public class BlackWidowEntity extends BaseSpiderEntity {
         return super.mobInteract(player, hand);
     }
 
+    @Override
     public void setInLove(int inLove) {
-        this.inLove = inLove;
-        if (inLove > 0) {
-            this.level().broadcastEntityEvent(this, (byte) 18);
-        }
+        super.setInLove(inLove);
     }
 
-    public SimpleContainer getInventory() {
+    public net.minecraft.world.SimpleContainer getInventory() {
         return this.inventory;
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag nbt) {
         super.addAdditionalSaveData(nbt);
-        nbt.putInt("InLove", this.inLove);
-        nbt.putInt("MatingCooldown", this.matingCooldown);
         nbt.put("Inventory", this.inventory.createTag());
-        if (this.nestPos != null) {
-            nbt.putLong("NestPos", this.nestPos.asLong());
-        }
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag nbt) {
         super.readAdditionalSaveData(nbt);
-        this.inLove = nbt.getInt("InLove");
-        this.matingCooldown = nbt.getInt("MatingCooldown");
         this.inventory.fromTag(nbt.getList("Inventory", 10));
-        if (nbt.contains("NestPos")) {
-            this.nestPos = BlockPos.of(nbt.getLong("NestPos"));
-        }
-        this.updateEquipment();
-    }
-
-    private void updateEquipment() {
-        if (!this.level().isClientSide) {
-            this.setItemSlot(EquipmentSlot.MAINHAND, this.inventory.getItem(0));
-            this.setDropChance(EquipmentSlot.MAINHAND, 1.0F);
-        }
     }
 
     @Override
@@ -182,8 +133,8 @@ public class BlackWidowEntity extends BaseSpiderEntity {
     protected void registerGoals() {
         this.goalSelector.addGoal(1, new FloatGoal(this));
         this.goalSelector.addGoal(2, new BlackWidowHarvestBerriesGoal(this));
-        this.goalSelector.addGoal(3, new BlackWidowLayEggGoal(this));
-        this.goalSelector.addGoal(4, new BlackWidowGuardNestGoal(this));
+        this.goalSelector.addGoal(3, new FemaleBaseSpider.SpiderLayEggGoal(this));
+        this.goalSelector.addGoal(4, new FemaleBaseSpider.SpiderGuardNestGoal(this));
         this.goalSelector.addGoal(5, new SpiderPlaceWebGoal(this));
         this.goalSelector.addGoal(6, new LeapAtTargetGoal(this, 0.4F));
         this.goalSelector.addGoal(7, new MeleeAttackGoal(this, 1.0D, true));
@@ -192,122 +143,12 @@ public class BlackWidowEntity extends BaseSpiderEntity {
         this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
         
         this.targetSelector.addGoal(1, new HurtByTargetGoal(this));
-        this.targetSelector.addGoal(2, new BlackWidowDefendNestGoal(this));
+        this.targetSelector.addGoal(2, new FemaleBaseSpider.SpiderDefendNestGoal(this));
         // Aggressive at night, neutral at day
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, 10, true, false, 
                 (entity) -> this.level().isNight()));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, 10, true, false,
                 (entity) -> this.level().isNight()));
-    }
-
-    public static class BlackWidowLayEggGoal extends Goal {
-        private final BlackWidowEntity spider;
-        private int layTicks;
-
-        public BlackWidowLayEggGoal(BlackWidowEntity spider) {
-            this.spider = spider;
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE, Goal.Flag.LOOK));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.spider.inLove > 600 && this.spider.matingCooldown <= 0;
-        }
-
-        @Override
-        public void start() {
-            this.layTicks = 0;
-        }
-
-        @Override
-        public void tick() {
-            this.layTicks++;
-            if (this.layTicks >= 100) {
-                layEgg();
-            }
-        }
-
-        private void layEgg() {
-            if (this.spider.level() instanceof ServerLevel serverLevel) {
-                BlockPos pos = this.spider.blockPosition();
-                // Create nest: place webs around
-                for (BlockPos p : BlockPos.betweenClosed(pos.offset(-1, 0, -1), pos.offset(1, 0, 1))) {
-                    if (serverLevel.isEmptyBlock(p) && serverLevel.getBlockState(p.below()).isSolid()) {
-                        serverLevel.setBlock(p, Blocks.COBWEB.defaultBlockState(), 3);
-                    }
-                }
-                
-                // Spawn a clutch of eggs (1-3)
-                int count = 1 + this.spider.getRandom().nextInt(3);
-                for (int i = 0; i < count; i++) {
-                    SpiderEgg egg = ModEntities.SPIDER_EGG.get().create(serverLevel);
-                    if (egg != null) {
-                        egg.setParentType(EntityType.getKey(this.spider.getType()).toString());
-                        double offsetX = (this.spider.getRandom().nextDouble() - 0.5D) * 0.5D;
-                        double offsetZ = (this.spider.getRandom().nextDouble() - 0.5D) * 0.5D;
-                        egg.moveTo(this.spider.getX() + offsetX, this.spider.getY(), this.spider.getZ() + offsetZ, 0.0F, 0.0F);
-                        serverLevel.addFreshEntity(egg);
-                    }
-                }
-                
-                this.spider.setNestPos(pos);
-                this.spider.setInLove(0);
-                this.spider.matingCooldown = 12000; // 10 minutes
-                serverLevel.broadcastEntityEvent(this.spider, (byte) 18);
-            }
-        }
-    }
-
-    public static class BlackWidowGuardNestGoal extends Goal {
-        private final BlackWidowEntity spider;
-
-        public BlackWidowGuardNestGoal(BlackWidowEntity spider) {
-            this.spider = spider;
-            this.setFlags(EnumSet.of(Goal.Flag.MOVE));
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.spider.getNestPos() != null && this.spider.getTarget() == null;
-        }
-
-        @Override
-        public void tick() {
-            BlockPos nest = this.spider.getNestPos();
-            if (this.spider.distanceToSqr(nest.getX(), nest.getY(), nest.getZ()) > 25.0D) {
-                this.spider.getNavigation().moveTo(nest.getX(), nest.getY(), nest.getZ(), 1.0D);
-            } else if (this.spider.getRandom().nextInt(40) == 0) {
-                double x = nest.getX() + (this.spider.getRandom().nextDouble() - 0.5D) * 6.0D;
-                double y = nest.getY();
-                double z = nest.getZ() + (this.spider.getRandom().nextDouble() - 0.5D) * 6.0D;
-                this.spider.getNavigation().moveTo(x, y, z, 0.8D);
-            }
-        }
-    }
-
-    public static class BlackWidowDefendNestGoal extends NearestAttackableTargetGoal<Player> {
-        private final BlackWidowEntity spider;
-
-        public BlackWidowDefendNestGoal(BlackWidowEntity spider) {
-            super(spider, Player.class, true);
-            this.spider = spider;
-        }
-
-        @Override
-        public boolean canUse() {
-            return this.spider.getNestPos() != null && super.canUse();
-        }
-
-        @Override
-        protected double getFollowDistance() {
-            return 8.0D;
-        }
-        
-        @Override
-        public void start() {
-            super.start();
-            // Alert other spiders nearby? Maybe later.
-        }
     }
 
     @Override
@@ -344,9 +185,9 @@ public class BlackWidowEntity extends BaseSpiderEntity {
         return super.isAlliedTo(entity);
     }
     public static class BlackWidowHarvestBerriesGoal extends MoveToBlockGoal {
-        private final BlackWidowEntity spider;
+        private final FemaleBaseSpider spider;
 
-        public BlackWidowHarvestBerriesGoal(BlackWidowEntity spider) {
+        public BlackWidowHarvestBerriesGoal(FemaleBaseSpider spider) {
             super(spider, 1.0D, 8);
             this.spider = spider;
         }
@@ -389,7 +230,7 @@ public class BlackWidowEntity extends BaseSpiderEntity {
             this.spider.level().setBlock(this.blockPos, newState, 2);
             this.spider.level().playSound(null, this.blockPos, net.minecraft.sounds.SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 0.8F + this.spider.getRandom().nextFloat() * 0.4F);
             
-            if (this.spider.matingCooldown <= 0 && this.spider.inLove <= 0) {
+            if (this.spider.getMatingCooldown() <= 0 && this.spider.getInLove() <= 0) {
                 this.spider.setInLove(600);
             }
         }
@@ -415,5 +256,4 @@ public class BlackWidowEntity extends BaseSpiderEntity {
             }
         }
     }
-
 }

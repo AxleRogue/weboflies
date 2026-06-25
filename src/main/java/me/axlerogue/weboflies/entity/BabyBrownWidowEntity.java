@@ -1,25 +1,29 @@
 package me.axlerogue.weboflies.entity;
-import me.axlerogue.weboflies.entity.client.ModEntities;
-import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.Mob;
+
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.ai.goal.*;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.Level;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-
+import net.minecraft.world.entity.Mob;
+import me.axlerogue.weboflies.entity.client.ModEntities;
+import net.minecraft.world.entity.ai.goal.FloatGoal;
+import net.minecraft.world.entity.ai.goal.AvoidEntityGoal;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.ai.goal.WaterAvoidingRandomStrollGoal;
+import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
+import net.minecraft.world.entity.ai.goal.RandomLookAroundGoal;
+import net.minecraft.world.entity.ai.goal.Goal;
+import net.minecraft.world.entity.LivingEntity;
 import java.util.List;
 
-public class BabyBlackWidowEntity extends FemaleBaseSpider {
+public class BabyBrownWidowEntity extends MaleBaseSpider {
     private int ageTicks = 0;
-    private static final int MAX_AGE = 72000; // 3 Minecraft days (24000 * 3)
-    private String adultType = "weboflies:black_widow";
+    private static final int MAX_AGE = 72000;
+    private String adultType = "weboflies:brown_widow";
 
-    public BabyBlackWidowEntity(EntityType<? extends BabyBlackWidowEntity> type, Level level) {
+    public BabyBrownWidowEntity(EntityType<? extends BabyBrownWidowEntity> type, Level level) {
         super(type, level);
     }
 
@@ -27,13 +31,9 @@ public class BabyBlackWidowEntity extends FemaleBaseSpider {
         this.adultType = type;
     }
 
-    public String getAdultType() {
-        return this.adultType;
-    }
-
     public static AttributeSupplier.Builder createAttributes() {
-        return BlackWidowEntity.createAttributes()
-                .add(Attributes.MAX_HEALTH, 10.0D)
+        return BrownWidowEntity.createAttributes()
+                .add(Attributes.MAX_HEALTH, 8.0D)
                 .add(Attributes.MOVEMENT_SPEED, 0.35D);
     }
 
@@ -41,11 +41,10 @@ public class BabyBlackWidowEntity extends FemaleBaseSpider {
     protected void registerGoals() {
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new AvoidEntityGoal<>(this, Player.class, 8.0F, 1.2D, 1.5D));
-        this.goalSelector.addGoal(2, new BlackWidowEntity.BlackWidowHarvestBerriesGoal(this));
-        this.goalSelector.addGoal(3, new BabyBlackWidowCallForHelpGoal(this));
-        this.goalSelector.addGoal(4, new WaterAvoidingRandomStrollGoal(this, 1.0D));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Player.class, 8.0F));
-        this.goalSelector.addGoal(6, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(2, new BabyBrownWidowCallForHelpGoal(this));
+        this.goalSelector.addGoal(3, new WaterAvoidingRandomStrollGoal(this, 1.0D));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 8.0F));
+        this.goalSelector.addGoal(5, new RandomLookAroundGoal(this));
     }
 
     @Override
@@ -61,7 +60,7 @@ public class BabyBlackWidowEntity extends FemaleBaseSpider {
 
     private void growUp() {
         if (this.level() instanceof ServerLevel serverLevel) {
-            EntityType<?> type = EntityType.byString(this.adultType).orElse(ModEntities.BLACK_WIDOW.get());
+            EntityType<?> type = EntityType.byString(this.adultType).orElse(ModEntities.BROWN_WIDOW.get());
             net.minecraft.world.entity.Entity adult = type.create(serverLevel);
             if (adult != null) {
                 adult.moveTo(this.getX(), this.getY(), this.getZ(), this.getYRot(), this.getXRot());
@@ -98,10 +97,10 @@ public class BabyBlackWidowEntity extends FemaleBaseSpider {
         return true;
     }
 
-    private static class BabyBlackWidowCallForHelpGoal extends Goal {
-        private final BabyBlackWidowEntity baby;
+    private static class BabyBrownWidowCallForHelpGoal extends Goal {
+        private final BabyBrownWidowEntity baby;
 
-        public BabyBlackWidowCallForHelpGoal(BabyBlackWidowEntity baby) {
+        public BabyBrownWidowCallForHelpGoal(BabyBrownWidowEntity baby) {
             this.baby = baby;
         }
 
@@ -114,14 +113,13 @@ public class BabyBlackWidowEntity extends FemaleBaseSpider {
         public void start() {
             LivingEntity attacker = baby.getLastHurtByMob();
             if (attacker != null) {
-                List<FemaleBaseSpider> list = baby.level().getEntitiesOfClass(FemaleBaseSpider.class, baby.getBoundingBox().inflate(16.0D));
-                for (FemaleBaseSpider spider : list) {
+                List<BrownWidowEntity> list = baby.level().getEntitiesOfClass(BrownWidowEntity.class, baby.getBoundingBox().inflate(16.0D));
+                for (BrownWidowEntity spider : list) {
                     if ((Mob)spider != (Mob)baby && spider.getTarget() == null) {
                         spider.setTarget(attacker);
                     }
                 }
             }
         }
-
     }
 }

@@ -8,13 +8,11 @@ Centuries ago, the King of Lies spun a massive web, creating a dimension that ha
 ## 🕷️ Key Features
 
 ### 1. Unique Entities
-- **Black Widow:** Peaceful and neutral during the day, but a fierce hunter at night. They extend the `Animal` class for breeding while implementing `Enemy` for hostile interactions. Features emissive glowing red eyes and hourglasses.
-- **Black Widow Brood Mother:** A powerful boss that guards the heart of spider colonies. She features advanced AI, including pounce attacks, ranged web projectiles, and the ability to summon Black Widows for aid. Always aggressive and maintains mini-boss status.
-- **Baby Black Widow:** A vulnerable stage of the spider lifecycle. They flee from danger and call for help from nearby adults. Peaceful during the day, hostile at night.
-- **Spider Egg:** Soul-bound entities that hatch into 4 babies. They inherit the species and traits of their parents.
-- **Corpse System:** Defeated Black Widow variants (Adult, Baby, and Brood Mother) now leave behind "severed" corpses with scattered body parts on the ground in the Dark Forest.
-- **Mob Dismemberment:** Custom spiders now feature a realistic dismemberment system where body parts (head, body, legs) physically separate and fly off with random momentum upon death, inspired by the "Mob Dismemberment" mod.
-- **Nametag System:** Entities now feature dynamic nametags that display their current health (e.g., "Black Widow 20.0/20.0") and update in real-time.
+- **Black Widow:** The primary female species. Peaceful and neutral during the day, but a fierce hunter at night. They can become "pregnant" after mating and lay eggs in cobweb nests. Features emissive glowing red eyes and hourglasses.
+- **Brown Widow:** The primary male species. They actively seek out female Black Widows to mate. Slightly smaller than Black Widows and features thematic brown textures with glowing red eyes.
+- **Black Widow Brood Mother:** A powerful female boss that guards the heart of spider colonies. She can lay eggs that hatch directly into adult Black or Brown Widows. Features advanced AI, pounce attacks, ranged web projectiles, and the ability to summon aid.
+- **Baby Spiders:** Vulnerable offspring (Baby Black Widows and Baby Brown Widows). They flee from danger and call for help.
+- **Spider Egg:** Soul-bound entities that hatch into 4 babies. They inherit traits from their parents and have a chance to hatch into either male or female variants.
 - **Spider Jockey Prevention:** Black Widows can no longer be ridden by skeletons or other entities, ensuring they remain independent hunters.
 - **Atmospheric Storytelling:** Added "mumbling" inner thoughts for players exploring the Dark Forest and server-wide broadcasts for slaying major mod entities.
 
@@ -27,27 +25,31 @@ Centuries ago, the King of Lies spun a massive web, creating a dimension that ha
 - **Atmospheric Effects:**
   - **Black Fog:** A thick, claustrophobic pitch-black fog that smoothly descends upon the dimension as night falls and clears at dawn.
   - **Blood Splatters:** Custom particle effects—green goo for spiders and red blood for players—when taking damage within the dimension.
-  - **Custom Music:** Immersive audio tracks that enhance the spooky atmosphere of the Spider Root Forest. *(Note: Music is currently experiencing technical issues in some biomes and is scheduled for a fix in the next update.)*
+  - **Custom Music:** Immersive audio tracks that enhance the spooky atmosphere of the Spider Root Forest. Music now plays more consistently with optimized delays.
 - **Custom Spawning:** Only mod-specific spiders and eggs spawn here; vanilla animals and mobs are strictly blocked. Spiders spawn as `CREATURE` category entities during the day.
 
-### 3. Advanced Teleportation
+### 3. World Types & Exploration
+- **WebOfLies World Type:** Create a new world using the "WebOfLies" world preset to experience the Dark Forest dimension as your primary world, featuring custom biomes, music, and atmospheric effects from the start.
 - **Homeward Cobweb:** A craftable block that acts as a beacon. When placed, it can be named and added to a cross-dimensional navigation network with a custom GUI.
 - **Thread of Fate:** A mystical item that allows players to teleport to a random Homeward Cobweb in their current dimension.
-- **Portal Mechanics:** Access the Dark Forest by right-clicking a vanilla cobweb. You will be safely transported to the surface of the new dimension at the heart of the forest.
 
 ### 4. Gameplay Mechanics
-- **Story Events:** Dynamic dialogue and narrations triggered by your actions, such as entering the dimension, defeating bosses, or harvesting resources.
-- **Breeding:** Black Widows can be bred using Fermented Spider Eyes or Goose Berries. After breeding, spiders will become "pregnant" and eventually build a cobweb nest to lay a clutch of eggs.
-- **Nesting & Guarding:** Black Widows will guard their egg nests and defend them against intruders.
+- **Story Events:** Dynamic dialogue and narrations triggered by your actions, such as entering the dimension, defeating bosses, or harvesting resources. Includes death notifications for all spider variants.
+- **Gender & Breeding System:** Spiders now have distinct Genders (Male and Female).
+  - **Females (Black Widows):** Lay eggs, guard nests, and harvest berries.
+  - **Males (Brown Widows):** Search for mates.
+  - Breeding requires both a male and a female. Successful mating makes the female "pregnant," leading her to build a nest.
+- **Nesting & Guarding:** Females will guard their egg nests and defend them against intruders.
 - **Day/Night Cycle:** Most spiders are now peaceful during the day (registered as `CREATURE` animals) but become hostile at night. The Brood Mother remains always hostile.
-- **Advancements:** A new set of advancements to guide you through the mod's features, from entering the Dark Forest to becoming a Master Slayer.
+- **Advancements:** A new set of advancements to guide you through the mod's features, including breeding challenges and slaying new spider variants.
+- **Glow Lighting:** Dynamic colored illumination follows entities (Red for spiders, Lime Green for eggs) when within valid dimensions and biomes.
 - **Web Placement:** Spiders dynamically place webs throughout the world, making navigation difficult for the unprepared.
 - **Loot Sensitivity:** Use a sword to harvest string from Spiderwebs or to safely retrieve a Homeward Cobweb.
 
 ## 🛠️ Getting Started
-1. **Entering the Dimension:** Find a vanilla cobweb in the Overworld and right-click it to be transported to the surface of the Dark Forest at (0, 0).
+1. **Entering the Dimension:** Select the **WebOfLies** world type when creating a new world. This will generate the Dark Forest dimension as your primary environment.
 2. **Survival:** Be wary of the night! Spiders become aggressive and a black fog will obscure your vision.
-3. **Teleportation:** Craft a Homeward Cobweb and a Thread of Fate to manage your travels between worlds using the global web network.
+3. **Teleportation:** Craft a Homeward Cobweb and a Thread of Fate to manage your travels within the dimension using the global web network.
 
 ## 🏆 Advancements
 The mod features a custom advancement tree that guides you through the story:

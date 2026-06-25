@@ -198,7 +198,7 @@ public class BlackWidowBroodMotherEntity extends BlackWidowEntity {
     }
 
     @Override
-    public void setCustomName(Component name) {
+    public void setCustomName(@javax.annotation.Nullable Component name) {
         super.setCustomName(name);
         this.bossEvent.setName(this.getDisplayName());
     }

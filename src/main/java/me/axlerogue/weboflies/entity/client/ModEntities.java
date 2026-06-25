@@ -1,12 +1,6 @@
 package me.axlerogue.weboflies.entity.client;
 import me.axlerogue.weboflies.WebOfLies;
-import me.axlerogue.weboflies.entity.BabyBlackWidowEntity;
-import me.axlerogue.weboflies.entity.BlackWidowEntity;
-import me.axlerogue.weboflies.entity.BlackWidowBroodMotherEntity;
-import me.axlerogue.weboflies.entity.SpiderEgg;
-import me.axlerogue.weboflies.entity.CorpseEntity;
-import me.axlerogue.weboflies.entity.SpiderGibEntity;
-import me.axlerogue.weboflies.entity.HauntedCobwebProjectile;
+import me.axlerogue.weboflies.entity.*;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -37,20 +31,21 @@ public class ModEntities {
                     .sized(4.2f, 2.7f)
                     .build("black_widow_brood_mother"));
 
+    public static final RegistryObject<EntityType<BrownWidowEntity>> BROWN_WIDOW = ENTITIES.register("brown_widow",
+            () -> EntityType.Builder.of(BrownWidowEntity::new, MobCategory.CREATURE)
+                    .sized(1.4f, 0.9f)
+                    .build("brown_widow"));
+
+    public static final RegistryObject<EntityType<BabyBrownWidowEntity>> BABY_BROWN_WIDOW = ENTITIES.register("baby_brown_widow",
+            () -> EntityType.Builder.of(BabyBrownWidowEntity::new, MobCategory.CREATURE)
+                    .sized(0.7f, 0.45f)
+                    .build("baby_brown_widow"));
+
     public static final RegistryObject<EntityType<HauntedCobwebProjectile>> HAUNTED_COBWEB_PROJECTILE = ENTITIES.register("haunted_cobweb_projectile",
             () -> EntityType.Builder.<HauntedCobwebProjectile>of(HauntedCobwebProjectile::new, MobCategory.MISC)
                     .sized(0.5f, 0.5f)
                     .build("haunted_cobweb_projectile"));
 
-    public static final RegistryObject<EntityType<CorpseEntity>> CORPSE = ENTITIES.register("corpse",
-            () -> EntityType.Builder.of(CorpseEntity::new, MobCategory.MISC)
-                    .sized(1.4f, 0.5f)
-                    .build("corpse"));
-
-    public static final RegistryObject<EntityType<SpiderGibEntity>> SPIDER_GIB = ENTITIES.register("spider_gib",
-            () -> EntityType.Builder.of(SpiderGibEntity::new, MobCategory.MISC)
-                    .sized(0.3f, 0.3f)
-                    .build("spider_gib"));
 
     public static void register(IEventBus eventBus) {
         ENTITIES.register(eventBus);

@@ -1,6 +1,17 @@
 {
+  "poison_fang_swamp_music": {
+    "category": "music",
+    "subtitle": "subtitles.weboflies.poison_fang_swamp_music",
+    "sounds": [
+      {
+        "name": "weboflies:music/poison_fang_swamp_music",
+        "stream": true
+      }
+    ]
+  },
   "spider_root_forest_music": {
     "category": "music",
+    "subtitle": "subtitles.weboflies.spider_root_forest_music",
     "sounds": [
       {
         "name": "weboflies:music/spider_root_forest_music",

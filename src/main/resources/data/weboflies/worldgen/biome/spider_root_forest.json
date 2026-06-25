@@ -1,67 +1,13 @@
 {
-  "has_precipitation": true,
-  "temperature": 0.5,
+  "carvers": {},
   "downfall": 0.8,
   "effects": {
-    "sky_color": 1251361,
-    "fog_color": 0,
-    "water_color": 63901,
-    "water_fog_color": 3289650,
-    "grass_color": 2636830,
-    "foliage_color": 2636830,
-    "mood_sound": {
-      "sound": "minecraft:ambient.cave",
-      "tick_delay": 6000,
-      "block_search_extent": 8,
-      "offset": 2.0
-    },
-    "music": {
-      "sound": "weboflies:spider_root_forest_music",
-      "min_delay": 600,
-      "max_delay": 1200,
-      "replace_current_music": true
-    }
-  },
-  "spawners": {
-    "monster": [
-      {
-        "type": "weboflies:black_widow",
-        "weight": 100,
-        "minCount": 2,
-        "maxCount": 4
-      },
-      {
-        "type": "weboflies:baby_black_widow",
-        "weight": 50,
-        "minCount": 1,
-        "maxCount": 2
-      },
-      {
-        "type": "weboflies:black_widow_brood_mother",
-        "weight": 5,
-        "minCount": 1,
-        "maxCount": 1
-      },
-      {
-        "type": "weboflies:spider_egg",
-        "weight": 20,
-        "minCount": 1,
-        "maxCount": 2
-      }
-    ],
-    "creature": [],
-    "ambient": [],
-    "underground_water_creature": [],
-    "water_creature": [],
-    "water_ambient": [],
-    "misc": []
-  },
-  "spawn_costs": {},
-  "carvers": {
-    "air": [
-      "minecraft:cave",
-      "minecraft:canyon"
-    ]
+    "fog_color": 2631720,
+    "foliage_color": 2833702,
+    "grass_color": 2833702,
+    "sky_color": 2833702,
+    "water_color": 3329330,
+    "water_fog_color": 329011
   },
   "features": [
     [],
@@ -70,23 +16,60 @@
     [],
     [],
     [],
-    [
-      "minecraft:ore_dirt",
-      "minecraft:ore_gravel",
-      "minecraft:ore_clay"
-    ],
+    [],
     [],
     [],
     [
-      "minecraft:dark_forest_vegetation",
-      "weboflies:tall_dark_oak",
-      "weboflies:spiderweb_generation"
-    ],
-    [
-      "minecraft:patch_grass_plain",
-      "minecraft:patch_tall_grass",
-      "weboflies:rose_bush_patch",
-      "weboflies:snowberry_bush_patch"
+      "weboflies:spider_root_tree_placed",
+      "weboflies:spider_web_placed",
+      "weboflies:goose_berry_bush_placed",
+      "weboflies:spider_root_bush_placed",
+      "weboflies:grass_placed",
+      "weboflies:tall_grass_placed"
     ]
-  ]
+  ],
+  "has_precipitation": true,
+  "spawn_costs": {},
+  "spawners": {
+    "ambient": [],
+    "axolotls": [],
+    "creature": [
+      {
+        "type": "weboflies:black_widow",
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 100
+      },
+      {
+        "type": "weboflies:brown_widow",
+        "maxCount": 4,
+        "minCount": 2,
+        "weight": 80
+      },
+      {
+        "type": "weboflies:baby_black_widow",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 50
+      },
+      {
+        "type": "weboflies:baby_brown_widow",
+        "maxCount": 2,
+        "minCount": 1,
+        "weight": 40
+      },
+      {
+        "type": "weboflies:black_widow_brood_mother",
+        "maxCount": 1,
+        "minCount": 1,
+        "weight": 5
+      }
+    ],
+    "misc": [],
+    "monster": [],
+    "underground_water_creature": [],
+    "water_ambient": [],
+    "water_creature": []
+  },
+  "temperature": 0.5
 }

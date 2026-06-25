@@ -18,10 +18,26 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
-public class SpiderEgg extends LivingEntity {
+public class SpiderEgg extends LivingEntity implements ISpider {
     private int hatchTicks = 0;
     private static final int HATCH_TIME = 24000; // 1 whole Minecraft day
     private String parentType = "weboflies:black_widow";
+
+    @Override
+    public Genders getGender() {
+        return Genders.FEMALE;
+    }
+
+    @Override
+    public boolean isBaby() {
+        return true;
+    }
+
+    @Override
+    public void setNestPos(BlockPos pos) {}
+
+    @Override
+    public BlockPos getNestPos() { return null; }
 
     public SpiderEgg(EntityType<? extends LivingEntity> type, Level level) {
         super(type, level);
@@ -53,14 +69,38 @@ public class SpiderEgg extends LivingEntity {
 
     private void hatch() {
         if (this.level() instanceof ServerLevel serverLevel) {
-            for (int i = 0; i < 4; i++) {
-                BabyBlackWidowEntity baby = ModEntities.BABY_BLACK_WIDOW.get().create(serverLevel);
-                if (baby != null) {
-                    baby.setAdultType(this.parentType);
+            int count = 4;
+            boolean isBroodMother = this.parentType.equals("weboflies:black_widow_brood_mother");
+
+            for (int i = 0; i < count; i++) {
+                Mob offspring;
+                if (isBroodMother) {
+                    // Brood mother eggs spawn adults
+                    if (this.random.nextBoolean()) {
+                        offspring = ModEntities.BLACK_WIDOW.get().create(serverLevel);
+                    } else {
+                        offspring = ModEntities.BROWN_WIDOW.get().create(serverLevel);
+                    }
+                } else {
+                    // Regular black widow eggs spawn babies
+                    if (this.random.nextBoolean()) {
+                        offspring = ModEntities.BABY_BLACK_WIDOW.get().create(serverLevel);
+                        if (offspring instanceof BabyBlackWidowEntity baby) {
+                            baby.setAdultType("weboflies:black_widow");
+                        }
+                    } else {
+                        offspring = ModEntities.BABY_BROWN_WIDOW.get().create(serverLevel);
+                        if (offspring instanceof BabyBrownWidowEntity baby) {
+                            baby.setAdultType("weboflies:brown_widow");
+                        }
+                    }
+                }
+
+                if (offspring != null) {
                     double offsetX = (this.random.nextDouble() - 0.5D) * 0.5D;
                     double offsetZ = (this.random.nextDouble() - 0.5D) * 0.5D;
-                    baby.moveTo(this.getX() + offsetX, this.getY(), this.getZ() + offsetZ, this.getYRot(), this.getXRot());
-                    serverLevel.addFreshEntity(baby);
+                    offspring.moveTo(this.getX() + offsetX, this.getY(), this.getZ() + offsetZ, this.getYRot(), this.getXRot());
+                    serverLevel.addFreshEntity(offspring);
                 }
             }
             this.discard();

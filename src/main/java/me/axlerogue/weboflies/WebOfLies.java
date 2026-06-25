@@ -21,28 +21,37 @@ import me.axlerogue.weboflies.block.ModBlocks;
 import me.axlerogue.weboflies.item.ModItems;
 import me.axlerogue.weboflies.item.ModCreativeModeTabs;
 import me.axlerogue.weboflies.entity.BabyBlackWidowEntity;
+import me.axlerogue.weboflies.entity.BabyBrownWidowEntity;
+import me.axlerogue.weboflies.entity.BrownWidowEntity;
 import me.axlerogue.weboflies.entity.BlackWidowEntity;
 import me.axlerogue.weboflies.entity.BlackWidowBroodMotherEntity;
 import me.axlerogue.weboflies.entity.SpiderEgg;
 import me.axlerogue.weboflies.entity.client.ModEntities;
 import me.axlerogue.weboflies.entity.renderer.BabyBlackWidowRenderer;
+import me.axlerogue.weboflies.entity.renderer.BabyBrownWidowRenderer;
+import me.axlerogue.weboflies.entity.renderer.BrownWidowRenderer;
 import me.axlerogue.weboflies.entity.renderer.BlackWidowRenderer;
 import me.axlerogue.weboflies.entity.renderer.BlackWidowBroodMotherRenderer;
-import me.axlerogue.weboflies.entity.renderer.CorpseRenderer;
-import me.axlerogue.weboflies.entity.renderer.SpiderGibRenderer;
 import me.axlerogue.weboflies.entity.renderer.SpiderEggModel;
 import me.axlerogue.weboflies.entity.renderer.SpiderEggRenderer;
-import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.client.renderer.DimensionSpecialEffects;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.FireBlock;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.EntityRenderersEvent;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+import net.minecraftforge.client.event.RegisterDimensionSpecialEffectsEvent;
 import net.minecraftforge.event.entity.EntityAttributeCreationEvent;
 import net.minecraftforge.event.entity.SpawnPlacementRegisterEvent;
+import me.axlerogue.weboflies.world.ModWorldPresets;
 import org.slf4j.Logger;
 
 @Mod(WebOfLies.MODID)
@@ -70,6 +79,7 @@ public class WebOfLies {
         ModCreativeModeTabs.register(modEventBus);
         ModEntities.register(modEventBus);
         ModSounds.register(modEventBus);
+        ModWorldPresets.register(modEventBus);
         ModBlockEntities.BLOCK_ENTITIES.register(modEventBus);
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
@@ -88,9 +98,9 @@ public class WebOfLies {
     }
 
     private void registerFlammable(Block block, int encouragement, int flammability) {
-        net.minecraft.world.level.block.FireBlock fireBlock = (net.minecraft.world.level.block.FireBlock) net.minecraft.world.level.block.Blocks.FIRE;
+        FireBlock fireBlock = (FireBlock) Blocks.FIRE;
         try {
-            java.lang.reflect.Method setFlammable = net.minecraft.world.level.block.FireBlock.class.getDeclaredMethod("setFlammable", Block.class, int.class, int.class);
+            java.lang.reflect.Method setFlammable = FireBlock.class.getDeclaredMethod("setFlammable", Block.class, int.class, int.class);
             setFlammable.setAccessible(true);
             setFlammable.invoke(fireBlock, block, encouragement, flammability);
         } catch (Exception e) {
@@ -116,12 +126,16 @@ public class WebOfLies {
             event.put(ModEntities.BLACK_WIDOW.get(), BlackWidowEntity.createAttributes().build());
             event.put(ModEntities.BABY_BLACK_WIDOW.get(), BabyBlackWidowEntity.createAttributes().build());
             event.put(ModEntities.BLACK_WIDOW_BROOD_MOTHER.get(), BlackWidowBroodMotherEntity.createAttributes().build());
+            event.put(ModEntities.BROWN_WIDOW.get(), BrownWidowEntity.createAttributes().build());
+            event.put(ModEntities.BABY_BROWN_WIDOW.get(), BabyBrownWidowEntity.createAttributes().build());
         }
 
         @SubscribeEvent
         public static void registerSpawnPlacements(SpawnPlacementRegisterEvent event) {
             event.register(ModEntities.BLACK_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+            event.register(ModEntities.BROWN_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
             event.register(ModEntities.BABY_BLACK_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
+            event.register(ModEntities.BABY_BROWN_WIDOW.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkSpiderSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
             event.register(ModEntities.BLACK_WIDOW_BROOD_MOTHER.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, BlackWidowBroodMotherEntity::checkBroodMotherSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
             event.register(ModEntities.SPIDER_EGG.get(), SpawnPlacements.Type.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, SpiderEgg::checkSpiderEggSpawnRules, SpawnPlacementRegisterEvent.Operation.REPLACE);
         }
@@ -153,13 +167,13 @@ public class WebOfLies {
             event.registerEntityRenderer(ModEntities.BLACK_WIDOW.get(), BlackWidowRenderer::new);
             event.registerEntityRenderer(ModEntities.BABY_BLACK_WIDOW.get(), BabyBlackWidowRenderer::new);
             event.registerEntityRenderer(ModEntities.BLACK_WIDOW_BROOD_MOTHER.get(), BlackWidowBroodMotherRenderer::new);
-            event.registerEntityRenderer(ModEntities.HAUNTED_COBWEB_PROJECTILE.get(), net.minecraft.client.renderer.entity.ThrownItemRenderer::new);
-            event.registerEntityRenderer(ModEntities.CORPSE.get(), CorpseRenderer::new);
-            event.registerEntityRenderer(ModEntities.SPIDER_GIB.get(), SpiderGibRenderer::new);
+            event.registerEntityRenderer(ModEntities.BROWN_WIDOW.get(), BrownWidowRenderer::new);
+            event.registerEntityRenderer(ModEntities.BABY_BROWN_WIDOW.get(), BabyBrownWidowRenderer::new);
+            event.registerEntityRenderer(ModEntities.HAUNTED_COBWEB_PROJECTILE.get(), ThrownItemRenderer::new);
         }
 
         @SubscribeEvent
-        public static void registerBlockColors(net.minecraftforge.client.event.RegisterColorHandlersEvent.Block event) {
+        public static void registerBlockColors(RegisterColorHandlersEvent.Block event) {
             ModBlocks.registerBlockColors(event);
         }
         @SubscribeEvent
